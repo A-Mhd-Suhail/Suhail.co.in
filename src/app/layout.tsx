@@ -20,7 +20,7 @@ const serif = Instrument_Serif({
 const sans = Manrope({ subsets: ["latin"], variable: "--font-sans", display: "swap" });
 
 const description =
-  "Mohamed Suhail is a developer and cybersecurity student in India. Software projects, hackathons and an initiative called NightBerrieZ.";
+  "Mohamed Suhail is a Cyber Security student at VIT University, India. Software projects, hackathons and an initiative called NightBerrieZ.";
 
 const siteName = profile.name;
 const iconImage = "/icons/icon-512.png";
@@ -74,7 +74,7 @@ const structuredData = {
       "@id": `${profile.siteUrl}/#person`,
       name: profile.name,
       url: profile.siteUrl,
-      jobTitle: "Developer and cybersecurity student",
+      jobTitle: "Cyber Security student, VIT University",
       sameAs: visibleSocialLinks.map((s) => s.url),
       image: `${profile.siteUrl}${iconImage}`,
       description,

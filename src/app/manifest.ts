@@ -6,7 +6,7 @@ export default function manifest(): MetadataRoute.Manifest {
   return {
     name: profile.name,
     short_name: "Suhail",
-    description: "Developer and cybersecurity student. Projects, hackathons and NightBerrieZ.",
+    description: "Cyber Security student at VIT University. Projects, hackathons and NightBerrieZ.",
     start_url: "/",
     display: "standalone",
     background_color: "#050506",
