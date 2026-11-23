@@ -1203,8 +1203,13 @@ html[data-tone="light"] {
 .hero2-stage.is-ready {
   opacity: 1;
 }
+.hero2-stage {
+  width: 100%;
+}
 .hero2-stage canvas {
   display: block;
+  width: 100% !important;
+  height: 100% !important;
 }
 .sculpture-fallback {
   position: absolute;
@@ -1754,6 +1759,7 @@ html::-webkit-scrollbar {
   overflow: clip;
 }
 .hero2-sticky {
+  width: 100%;
   position: sticky;
   top: 0;
   height: 100svh;

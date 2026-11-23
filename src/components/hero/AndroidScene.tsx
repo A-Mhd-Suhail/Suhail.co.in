@@ -212,10 +212,10 @@ export default function AndroidScene({
       frameloop={!active ? "never" : reduced || paused ? "demand" : "always"}
       dpr={[1, 1.75]}
       camera={{ position: [0, 0.05, 6.2], fov: 30, near: 0.01, far: 80 }}
-      gl={{ antialias: true, alpha: false, powerPreference: "high-performance" }}
-      onCreated={({ gl, scene }) => {
+      gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
+      onCreated={({ gl }) => {
         gl.toneMappingExposure = 1.0;
-        scene.background = new THREE.Color("#080808");
+        gl.setClearColor(0x000000, 0);
         gl.domElement.addEventListener("webglcontextlost", () => onLost(), { once: true });
         onReady();
       }}
