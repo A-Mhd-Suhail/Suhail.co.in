@@ -45,7 +45,7 @@ export function Contact() {
           <ul aria-label="Social profiles" style={{ display: "flex", flexWrap: "wrap", gap: "1.5rem", marginTop: "2.5rem" }}>
             {visibleSocialLinks.map((s) => (
               <li key={s.label}>
-                <a className="text-link" href={s.url} target="_blank" rel="noreferrer">{s.label}</a>
+                <a className="text-link" href={s.url} target="_blank" rel="noopener noreferrer">{s.label}</a>
               </li>
             ))}
           </ul>

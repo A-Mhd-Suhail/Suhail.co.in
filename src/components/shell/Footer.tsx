@@ -34,7 +34,7 @@ export function Footer() {
             </a>
             <span style={{ padding: "0.4rem 0" }}>{country}</span>
             {visibleSocialLinks.map((s) => (
-              <a key={s.label} className="text-link" href={s.url} target="_blank" rel="noreferrer">
+              <a key={s.label} className="text-link" href={s.url} target="_blank" rel="noopener noreferrer">
                 {s.label}
               </a>
             ))}
