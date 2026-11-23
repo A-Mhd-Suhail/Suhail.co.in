@@ -29,7 +29,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(profile.siteUrl),
   alternates: { canonical: "/" },
   applicationName: siteName,
-  title: { default: `${profile.name} | Developer and cybersecurity student`, template: `%s | ${profile.name}` },
+  title: { default: `${profile.name} | Cyber Security VIT University`, template: `%s | ${profile.name}` },
   description,
   authors: [{ name: profile.name, url: profile.siteUrl }],
   creator: profile.name,
