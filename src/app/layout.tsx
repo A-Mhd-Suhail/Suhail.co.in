@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Instrument_Serif, Manrope } from "next/font/google";
 import { profile } from "@/content/profile";
+import { visibleSocialLinks } from "@/content/social";
 import { Providers } from "@/components/Providers";
 import { Preloader } from "@/components/shell/Preloader";
 import { Header } from "@/components/shell/Header";
@@ -74,6 +75,7 @@ const structuredData = {
       name: profile.name,
       url: profile.siteUrl,
       jobTitle: "Developer and cybersecurity student",
+      sameAs: visibleSocialLinks.map((s) => s.url),
       image: `${profile.siteUrl}${iconImage}`,
       description,
     },

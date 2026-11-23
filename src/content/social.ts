@@ -8,8 +8,8 @@ export interface SocialLink {
 }
 
 export const socialLinks: SocialLink[] = [
-  { label: "GitHub", url: "" },
-  { label: "LinkedIn", url: "" },
+  { label: "GitHub", url: "https://github.com/A-Mhd-Suhail" },
+  { label: "LinkedIn", url: "https://www.linkedin.com/in/mhdsuhail2007/" },
   { label: "Instagram", url: "" },
   { label: "X", url: "" },
 ];
