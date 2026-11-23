@@ -29,5 +29,5 @@ export const profile = {
   resumeUrl: null as string | null,
 
   /** Replace with the real domain once deployed. */
-  siteUrl: "https://example.com",
+  siteUrl: "https://suhail.co.in",
 } as const;

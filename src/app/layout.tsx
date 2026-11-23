@@ -23,6 +23,7 @@ const description =
 
 export const metadata: Metadata = {
   metadataBase: new URL(profile.siteUrl),
+  alternates: { canonical: "/" },
   title: { default: `${profile.name} | Developer and cybersecurity student`, template: `%s | ${profile.name}` },
   description,
   authors: [{ name: profile.name }],
