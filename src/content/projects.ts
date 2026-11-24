@@ -101,7 +101,7 @@ export const projects: Project[] = [
     tech: [],
     links: { demo: "https://unitedmedication.vercel.app/" },
     screenshots: [
-      { src: "/projects/united-medication/home.webp", alt: "United Medication home page with five role portals", width: 2000, height: 1151, caption: "Five portals: patients, caretakers, doctors, hospitals, government" },
+      { src: "/projects/united-medication/hero.webp", alt: "United Medication landing page: Healthcare Without Boundaries, over a hospital lobby", width: 2000, height: 1157, caption: "Healthcare Without Boundaries. One network, every health journey" },
     ],
     visibility: "public",
   },
