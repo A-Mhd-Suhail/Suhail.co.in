@@ -240,7 +240,6 @@ export function Journey() {
             <p className="bp-focus">{focus.name}</p>
             <a className="bp-link" href={focus.href}>
               {focus.cta}
-              <span aria-hidden> →</span>
             </a>
           </div>
         </div>
@@ -271,7 +270,7 @@ export function Journey() {
                 )}
                 <div className="nw-actions">
                   <a className="nw-btn nw-btn-main" href={`/work/${p.slug}`}>
-                    Explore project <span aria-hidden>→</span>
+                    Explore project
                   </a>
                   {p.links.demo && (
                     <a className="nw-btn" href={p.links.demo} target="_blank" rel="noopener noreferrer">

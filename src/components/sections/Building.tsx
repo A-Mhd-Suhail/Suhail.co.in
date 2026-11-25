@@ -87,7 +87,7 @@ export function Building() {
             <p className="nbx-text">{startup.intro}</p>
             <p className="nbx-text nbx-text-dim">{startup.invitation}</p>
             <a className="nbx-cta" href={`mailto:${profile.contact.email}?subject=NightBerrieZ`}>
-              {startup.cta} <span aria-hidden>→</span>
+              {startup.cta}
             </a>
           </div>
         </div>
