@@ -4,16 +4,14 @@ import { useEffect, useRef, useState } from "react";
 import { profile } from "@/content/profile";
 import { navItems } from "@/content/nav";
 import { useActiveSection } from "@/lib/useActiveSection";
-import { motionStore, usePaused } from "@/lib/motionStore";
 import { Roll } from "@/components/ui/Roll";
 
 /**
- * Fixed header: wordmark, a round pause/resume control for the hero animation, LET'S TALK and MENU.
+ * Fixed header: wordmark, LET'S TALK and MENU.
  * Colours follow whatever section is under the header (data-tone on sections drives html[data-tone]).
  */
 export function Header() {
   const active = useActiveSection();
-  const paused = usePaused();
   const [open, setOpen] = useState(false);
   const toggle = useRef<HTMLButtonElement>(null);
   const firstLink = useRef<HTMLAnchorElement>(null);
@@ -90,25 +88,6 @@ export function Header() {
       </a>
 
       <div className="header-actions">
-        {
-          <button
-            type="button"
-            className="hbtn hbtn-round"
-            aria-label={paused ? "Resume the 3D animation" : "Pause the 3D animation"}
-            onClick={() => motionStore.toggle()}
-          >
-            {paused ? (
-              <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden>
-                <path d="M4 2.5v11l9-5.5z" fill="currentColor" />
-              </svg>
-            ) : (
-              <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden>
-                <rect x="3" y="2" width="3.2" height="12" rx="1" fill="currentColor" />
-                <rect x="9.8" y="2" width="3.2" height="12" rx="1" fill="currentColor" />
-              </svg>
-            )}
-          </button>
-        }
         <a className="hbtn hbtn-talk" href="/contact">
           <Roll>Let&apos;s talk</Roll>
           <span className="hbtn-dot" aria-hidden />

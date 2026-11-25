@@ -3,10 +3,9 @@
 import { useEffect, useRef, useState } from "react";
 import { profile } from "@/content/profile";
 import { useScene } from "@/lib/useScene";
-import { usePaused } from "@/lib/motionStore";
-import { SculptureFallback } from "./SculptureFallback";
+import { CardFallback } from "./CardFallback";
 
-type SceneComponent = typeof import("./AndroidScene").default;
+type SceneComponent = typeof import("./CardScene").default;
 
 /** Centre statement. The name stays in the header wordmark and the screen-reader heading. */
 const LINES = ["Imagine. Innovate.", "Build beyond the boundaries."];
@@ -14,7 +13,6 @@ const LINES = ["Imagine. Innovate.", "Build beyond the boundaries."];
 export function Hero() {
   const host = useRef<HTMLElement>(null);
   const s = useScene(host);
-  const paused = usePaused();
   const [Scene, setScene] = useState<SceneComponent | null>(null);
   const { gl, onLost } = s;
 
@@ -22,7 +20,7 @@ export function Hero() {
   useEffect(() => {
     if (gl !== "ok") return;
     let cancelled = false;
-    import("./AndroidScene")
+    import("./CardScene")
       .then((m) => !cancelled && setScene(() => m.default))
       .catch(() => !cancelled && onLost());
     return () => {
@@ -40,6 +38,9 @@ export function Hero() {
       const total = Math.max(1, el.offsetHeight - window.innerHeight);
       const p = Math.min(1, Math.max(0, -el.getBoundingClientRect().top / total));
       el.style.setProperty("--p", p.toFixed(4));
+      // The ivory portal covers the header at the end, so the header switches to its dark-on-light colours.
+      const tone = p > 0.93 ? "light" : "dark";
+      if (el.dataset.tone !== tone) el.dataset.tone = tone;
     };
     const onScroll = () => {
       if (!raf) raf = requestAnimationFrame(update);
@@ -64,29 +65,32 @@ export function Hero() {
 
         <div className={`hero2-stage ${s.ready || s.gl === "unavailable" ? "is-ready" : ""}`} aria-hidden>
           {s.gl === "ok" && Scene && (
-            <Scene pointer={s.pointer} reduced={s.reduced} active={s.active} paused={paused} onReady={s.onReady} onLost={s.onLost} />
+            <Scene pointer={s.pointer} reduced={s.reduced} active={s.active} onReady={s.onReady} onLost={s.onLost} />
           )}
-          {s.gl === "unavailable" && <SculptureFallback />}
+          {s.gl === "unavailable" && <CardFallback />}
         </div>
 
-        <h1 className="hero2-title">
-          <span className="sr-only">{profile.name}. Imagine. Innovate. Build beyond the boundaries.</span>
-          {LINES.map((line, i) => (
-            <span className="hero2-line" key={line} aria-hidden style={{ ["--i" as string]: i }}>
-              <span>{line}</span>
-            </span>
-          ))}
-        </h1>
-
-        <p className="hero2-name">{profile.name}</p>
-
-        <p className="hero2-meta rise" style={{ ["--d" as string]: 0.9 }}>
-          {profile.roles.join(" · ")} · {profile.contact.country}
-        </p>
+        <div className="hx-copy">
+          <h1 className="hx-title">
+            <span className="sr-only">{profile.name}. Imagine. Innovate. Build beyond the boundaries.</span>
+            {LINES.map((line, i) => (
+              <span className="hero2-line" key={line} aria-hidden style={{ ["--i" as string]: i }}>
+                <span>{line}</span>
+              </span>
+            ))}
+          </h1>
+          <hr className="hx-rule rise" style={{ ["--d" as string]: 0.55 }} />
+          <p className="hx-name rise" style={{ ["--d" as string]: 0.7 }}>
+            {profile.name}
+          </p>
+        </div>
 
         <p className="hero2-scroll" aria-hidden>
           Scroll to enter
         </p>
+
+        {/* Opens at the end of the scroll: the ivory of the next section grows out of the card. */}
+        <div className="hx-portal" aria-hidden />
       </div>
     </section>
   );

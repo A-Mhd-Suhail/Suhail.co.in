@@ -1828,3 +1828,163 @@ html::-webkit-scrollbar {
   background: radial-gradient(closest-side, rgba(8, 8, 8, 0.92), rgba(8, 8, 8, 0.6) 55%, rgba(8, 8, 8, 0) 100%);
   pointer-events: none;
 }
+
+/* ═════════════ Hero: editorial copy on the left, 3D visiting card on the right ═════════════ */
+.hero2 {
+  height: 340svh;
+  background: radial-gradient(75% 95% at 74% 50%, #1b1c20 0%, #0c0c0e 58%, #050506 100%);
+}
+.hero2-halo {
+  display: none;
+}
+.hero2-glow {
+  left: 74%;
+  top: 50%;
+  width: min(80vh, 46vw);
+  height: min(80vh, 46vw);
+  background: radial-gradient(closest-side, rgba(150, 154, 166, 0.16), rgba(110, 114, 126, 0.05) 60%, transparent 80%);
+}
+.hero2-stage canvas {
+  position: absolute;
+  inset: 0;
+}
+.hx-copy {
+  position: absolute;
+  z-index: 3;
+  left: var(--header-pad-x);
+  top: 50%;
+  width: min(44%, 40rem);
+  transform: translateY(-50%);
+  pointer-events: none;
+  opacity: max(0, min(1, calc(1 - var(--p, 0) * 7)));
+}
+.hx-title {
+  margin: 0;
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-weight: 400;
+  font-size: clamp(1.5rem, 3.1vw, 3.3rem);
+  line-height: 1.16;
+  letter-spacing: 0.015em;
+  text-transform: uppercase;
+  color: var(--pearl);
+}
+.hx-title .hero2-line + .hero2-line {
+  margin-top: 0.35em;
+  color: rgba(243, 239, 230, 0.72);
+}
+.hx-rule {
+  width: 100%;
+  height: 0;
+  margin: clamp(1.4rem, 3vw, 2.4rem) 0 clamp(1rem, 2vw, 1.5rem);
+  border: 0;
+  border-top: 1px solid rgba(243, 239, 230, 0.24);
+}
+.hx-name {
+  margin: 0;
+  font-family: var(--font-serif), Georgia, serif;
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(1.15rem, 1.7vw, 1.6rem);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #c4c7cd;
+}
+.hero2-scroll {
+  left: var(--header-pad-x);
+  transform: none;
+}
+.hx-portal {
+  --pp: clamp(0, calc((var(--p, 0) - 0.8) * 5), 1);
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+  background: var(--ivory);
+  -webkit-mask-image: radial-gradient(circle farthest-corner at 50% 50%, #000 calc(var(--pp) * 118% - 16%), transparent calc(var(--pp) * 118%));
+  mask-image: radial-gradient(circle farthest-corner at 50% 50%, #000 calc(var(--pp) * 118% - 16%), transparent calc(var(--pp) * 118%));
+}
+
+/* Static card, only when WebGL is not available. */
+.card-fallback {
+  position: absolute;
+  top: 50%;
+  left: 74%;
+  width: min(34vw, 30rem);
+  aspect-ratio: 1.586;
+  transform: translate(-50%, -50%) perspective(1200px) rotateX(18deg) rotateY(-24deg) rotateZ(2deg);
+}
+.card-fallback-face {
+  height: 100%;
+  padding: 7%;
+  border-radius: 5%;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(135deg, #1a1b1f, #0d0d0f 60%, #151518);
+  border: 1px solid rgba(220, 223, 230, 0.35);
+  box-shadow: 0 40px 80px rgba(0, 0, 0, 0.6);
+  color: #d9dce2;
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: clamp(0.5rem, 0.85vw, 0.8rem);
+}
+.card-fallback .cf-row {
+  display: flex;
+  justify-content: space-between;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #9a9ea6;
+}
+.card-fallback .cf-name {
+  margin: 1.2em 0 0.2em;
+  font-family: var(--font-serif), Georgia, serif;
+  font-size: 3.4em;
+  line-height: 1;
+}
+.card-fallback .cf-role {
+  margin: 0;
+  color: #9a9ea6;
+}
+.card-fallback hr {
+  width: 100%;
+  margin: 1.2em 0;
+  border: 0;
+  border-top: 1px solid rgba(217, 220, 226, 0.4);
+}
+.card-fallback .cf-school {
+  margin: 0 0 0.3em;
+  font-size: 1.15em;
+}
+.card-fallback .cf-foot {
+  margin-top: auto;
+}
+
+/* Portrait and phone: copy on top, card below. */
+@media (max-aspect-ratio: 19/20) {
+  .hero2 {
+    background: radial-gradient(90% 60% at 50% 66%, #1b1c20 0%, #0c0c0e 60%, #050506 100%);
+  }
+  .hero2-glow {
+    left: 50%;
+    top: 66%;
+    width: 90vw;
+    height: 90vw;
+  }
+  .hx-copy {
+    left: var(--header-pad-x);
+    right: var(--header-pad-x);
+    top: clamp(5.5rem, 16vw, 8rem);
+    width: auto;
+    transform: none;
+  }
+  .hx-title {
+    font-size: clamp(1.35rem, 6.2vw, 2.6rem);
+  }
+  .hero2-scroll {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  .card-fallback {
+    top: 66%;
+    left: 50%;
+    width: min(80vw, 28rem);
+  }
+}

@@ -25,6 +25,16 @@ export const profile = {
     country: "India",
   },
 
+  /** Text engraved on the hero visiting card. Edit here; nothing else is hard-coded. */
+  card: {
+    label: "Personal identity",
+    index: "01 / 01",
+    name: "SUHAIL.",
+    role: "Cyber Security Enthusiast",
+    school: "VIT University",
+    building: "Building NightBerrieZ",
+  },
+
   /** Path to a PDF in /public (e.g. "/resume.pdf"). null hides the download link. */
   resumeUrl: null as string | null,
 
