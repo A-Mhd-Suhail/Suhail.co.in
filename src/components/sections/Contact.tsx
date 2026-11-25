@@ -1,5 +1,5 @@
 import { Mail, Phone } from "lucide-react";
-import { CopyEmail } from "@/components/shell/CopyEmail";
+import { CopyButton } from "@/components/shell/CopyButton";
 import { GithubIcon, LinkedinIcon, WhatsappIcon } from "@/components/shell/BrandIcons";
 import { Headline } from "@/components/ui/Reveal";
 import { profile } from "@/content/profile";
@@ -22,26 +22,31 @@ export function Contact() {
     <section id="contact" className="section overlap overlap-light" data-tone="light" aria-labelledby="contact-title">
       <div className="wrap contact">
         <p className="label" style={{ marginBottom: "1rem" }}>Contact</p>
-        <div id="contact-title">
-          <Headline as="h2" className="h1" lines={["Let's create something", "meaningful."]} />
+        <div id="contact-title" className="contact-title">
+          <Headline as="h2" className="h1" lines={["Always feel free to", "connect with me."]} />
         </div>
+        <p className="lede contact-lede">
+          Whether you have an idea, want to discuss technology, explore a collaboration, or simply connect, you&apos;re always welcome to reach out.
+        </p>
 
         <div className="contact-mailrow">
           <a className="contact-mail" href={`mailto:${email}`}>
             {email}
           </a>
-          <CopyEmail email={email} />
+          <CopyButton value={email} label="email address" />
+        </div>
+        <div className="contact-mailrow contact-phonerow">
+          <a className="contact-phone" href={`tel:${phoneE164}`}>
+            <Phone aria-hidden size={16} strokeWidth={1.6} />
+            {phoneDisplay}
+          </a>
+          <CopyButton value={phoneDisplay} label="phone number" />
         </div>
 
-        <ul className="contact-icons" aria-label="Contact and social links">
+        <ul className="contact-icons" aria-label="Social and contact links">
           {links.map((l) => (
             <li key={l.key}>
-              <a
-                className="contact-icon"
-                href={l.href}
-                aria-label={l.label}
-                {...(l.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
-              >
+              <a className="contact-icon" href={l.href} aria-label={l.label} {...(l.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}>
                 {l.icon}
                 <span className="contact-tip" aria-hidden>
                   {l.label}
@@ -50,11 +55,6 @@ export function Contact() {
             </li>
           ))}
         </ul>
-
-        <a className="contact-phone" href={`tel:${phoneE164}`}>
-          <Phone aria-hidden size={16} strokeWidth={1.6} />
-          {phoneDisplay}
-        </a>
       </div>
     </section>
   );

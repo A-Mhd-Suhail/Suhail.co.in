@@ -8,6 +8,8 @@ export interface Project {
   /** One line, in plain words. */
   summary: string;
   category?: string;
+  /** Uppercase line shown above the name in the journey, e.g. "SPACE TECHNOLOGY · NASA SPACE APPS". */
+  tag?: string;
   /** Hackathon or context the project was built for. */
   context?: string;
   /** Leave undefined until confirmed. Nothing is shown when undefined. */
@@ -52,6 +54,7 @@ export const projects: Project[] = [
     headline: "Read the light before you land.",
     summary: "An interactive lunar mission-support prototype: sunlight, Earth visibility and communication windows at the Moon's South Pole.",
     category: "Space",
+    tag: "Space technology · NASA Space Apps",
     context: "NASA Space Apps Challenge 2026",
     status: "prototype",
     statusNote: "An independent research and educational prototype. It is not NASA-owned or endorsed, and emergency actions and spacecraft behaviour in it are simulations (from the project README).",
@@ -81,6 +84,7 @@ export const projects: Project[] = [
     headline: "Learning should connect people, not just content.",
     summary: "An education platform for school learning and competitive exam preparation, built around connected student learning.",
     category: "Education",
+    tag: "EdTech · Education",
     status: "in-progress",
     statusNote: "Still being built. Question Papers, Tests and Games are placeholders for now (from the project README).",
     overview: "A platform for school students and exam preparation (JEE and NEET) plus language learning, where learners study from structured video lessons and learn together in groups, with a permanent year-based Student ID created at sign-in.",
@@ -109,6 +113,7 @@ export const projects: Project[] = [
     headline: "Healthcare without boundaries.",
     summary: "A healthcare portal prototype connecting patients, caretakers, doctors, hospitals and government administrators.",
     category: "Healthcare",
+    tag: "HealthTech · Healthcare",
     status: "prototype",
     statusNote: "A prototype. It is not meant for real patient data without production security rules, encryption, consent management and compliance review (from the project README).",
     overview: "Healthcare without boundaries: one network where patients, caretakers, doctors, hospitals and government administrators work from a shared health identity and connected records, in a black, gold and white design.",

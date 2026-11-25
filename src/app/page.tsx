@@ -1,6 +1,5 @@
 import { Hero } from "@/components/hero/Hero";
-import { Beyond } from "@/components/beyond/Beyond";
-import { Network } from "@/components/network/Network";
+import { Journey } from "@/components/journey/Journey";
 import { ScrollReveal } from "@/components/ui/ScrollReveal";
 import { Marquee } from "@/components/ui/Marquee";
 import { Recognition } from "@/components/sections/Recognition";
@@ -14,8 +13,7 @@ export default function Home() {
     <>
       <ScrollReveal />
       <Hero />
-      <Beyond />
-      <Network />
+      <Journey />
       <div className="overlap overlap-light" data-tone="light">
         <Marquee items={ticker} />
       </div>

@@ -1,30 +1,38 @@
 /**
- * Copy for the "Beyond the profile" world-map section. Edit here; nothing is hard-coded in the component.
- * Only facts supplied by Mohamed Suhail. Do not add achievements, experience or skills that are not his.
+ * Copy for the About part of the journey. Edit here; nothing is hard-coded in the component.
+ * Only facts supplied by Mohamed Suhail. Do not add achievements, results, competition names,
+ * statistics or professional claims that are not his. Interests are interests, not credentials.
  */
 export const beyond = {
   title: "Beyond the profile",
 
+  /** Moment 01 */
   identity: {
-    label: "About me",
+    label: "A little about me",
     name: "Mohamed Suhail",
-    lines: ["Computer Science & Engineering", "Cyber Security · VIT University"],
+    text: "I'm Mohamed Suhail, currently pursuing Computer Science and Engineering with a specialization in Cyber Security at VIT University.",
+    text2: "I'm interested in exploring how technology works, how ideas become products, and how engineering can solve meaningful problems.",
   },
 
+  /** Moment 02 */
   interests: {
-    label: "Exploring what's next",
+    label: "Always exploring what's next.",
     items: ["Cybersecurity", "Artificial Intelligence", "AI Agents", "Quantum Computing", "Cryptography"],
+    productLead: "Beyond the technology, I'm drawn to how meaningful products come to exist:",
+    product: ["Real-world problems", "What people actually need", "Product discovery", "Product strategy", "Product management"],
   },
 
+  /** Moment 03 */
   journey: {
-    headline: "Curious by nature. Driven by innovation.",
-    text: "I enjoy exploring emerging technologies, taking part in hackathons and innovation challenges, solving hard problems, and connecting with people who love building meaningful things.",
+    headline: "Curious by nature. Always building.",
+    text: "I enjoy participating in hackathons and innovation challenges, experimenting with new ideas, solving technical problems and bringing people together to build. Winning is rewarding, but I also value what I learn from challenges that do not go as planned.",
+    team: "I also like organizing teams and working with people who see problems differently.",
   },
 
+  /** Moment 04 */
   focus: {
-    label: "Currently focused on",
-    lead: "Developing",
-    name: "NightBerrieZ.",
+    label: "Currently developing",
+    name: "NightBerrieZ",
     href: "/#building",
     cta: "About NightBerrieZ",
   },
