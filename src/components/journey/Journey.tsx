@@ -37,8 +37,9 @@ const MOMENTS: [number, number][] = [
   [0.39, 0.5],
 ];
 const PULL = [0.5, 0.59] as const; // map pulls back into Earth
-const FLY = [0.57, 0.71] as const; // Earth to Moon
-const EXIT = [0.78, 0.88] as const; // Moon leaves, open space remains
+const FLY = [0.57, 0.71] as const; // Earth to the first project world
+const HOP1 = [0.77, 0.82] as const; // first world to second (while the panel turns)
+const HOP2 = [0.87, 0.92] as const; // second world to third
 /** Project panels: [turns in, turns out]. Each turn takes 0.02. */
 const PROJECTS: [number, number][] = [
   [0.7, 0.78],
@@ -50,7 +51,7 @@ const statusLabel = { completed: "Completed", "in-progress": "In progress", prot
 
 export function Journey() {
   const root = useRef<HTMLElement>(null);
-  const ctl = useRef<JourneyCtl>({ u1: 0, u2: 0, u3: 0 });
+  const ctl = useRef<JourneyCtl>({ u1: 0, s: 0 });
   const [scene, setScene] = useState(false);
   const [moment, setMoment] = useState(-1);
   const [proj, setProj] = useState(-1);
@@ -61,8 +62,15 @@ export function Journey() {
     .map((s) => ({ ...s, project: all.find((p) => p.slug === s.slug) }))
     .filter((s): s is typeof s & { project: Project } => !!s.project);
 
+  const [gl, setGl] = useState(true);
   useLayoutEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) setStill(true);
+    try {
+      const c = document.createElement("canvas");
+      if (!(c.getContext("webgl2") || c.getContext("webgl"))) setGl(false);
+    } catch {
+      setGl(false);
+    }
   }, []);
 
   useEffect(() => {
@@ -114,21 +122,15 @@ export function Journey() {
       set("--bp", clamp(t / 0.5));
 
       const c1 = smooth(clamp((t - PULL[0]) / (PULL[1] - PULL[0])));
-      const u2 = clamp((t - FLY[0]) / (FLY[1] - FLY[0]));
-      const u3 = clamp((t - EXIT[0]) / (EXIT[1] - EXIT[0]));
       set("--c1", c1);
       ctl.current.u1 = clamp((t - PULL[0]) / (PULL[1] - PULL[0]));
-      ctl.current.u2 = u2;
-      ctl.current.u3 = u3;
+      ctl.current.s = clamp((t - FLY[0]) / (FLY[1] - FLY[0])) + clamp((t - HOP1[0]) / (HOP1[1] - HOP1[0])) + clamp((t - HOP2[0]) / (HOP2[1] - HOP2[0]));
 
       MOMENTS.forEach(([a, b], i) => set(`--m${i}`, win(t, a, b)));
       PROJECTS.forEach(([a, b], i) => {
         const deg = 90 * (1 - clamp((t - a) / 0.02)) - 90 * clamp((t - b) / 0.02);
         set(`--ry${i}`, deg, 2);
       });
-      set("--moon", clamp((t - 0.62) / 0.1) * (1 - u3));
-      set("--deco1", win(t, 0.79, 0.89, 0.03));
-      set("--deco2", clamp((t - 0.89) / 0.03));
 
       const m = MOMENTS.findIndex(([a, b]) => t >= a && t < b);
       if (m !== mom) {
@@ -178,14 +180,14 @@ export function Journey() {
   const active = (i: number) => still || proj === i;
 
   return (
-    <section ref={root} id="journey" className="jr" data-tone="dark" data-still={still ? "true" : "false"} data-iris="opening" data-map="on" aria-label="About and selected work">
+    <section ref={root} id="journey" className="jr" data-tone="dark" data-still={still ? "true" : "false"} data-gl={gl ? "on" : "off"} data-iris="opening" data-map="on" aria-label="About and selected work">
       <span id="beyond" className="jr-anchor" style={{ top: "var(--a1-top)", height: "var(--a1-h)" }} aria-hidden />
       <span id="things-i-build" className="jr-anchor" style={{ top: "var(--a2-top)", height: "var(--a2-h)" }} aria-hidden />
       <div className="jr-stage">
         <div className="jr-bg" aria-hidden />
 
         <div className="jr-3d" aria-hidden>
-          {scene && !still && <JourneyScene ctl={ctl.current} />}
+          {scene && !still && gl && <JourneyScene ctl={ctl.current} />}
         </div>
 
         <div className="jr-map" aria-hidden>
@@ -247,29 +249,6 @@ export function Journey() {
           <ProfilePhoto />
         </div>
 
-        {/* ───── Space decor for the two later projects ───── */}
-        <svg className="jr-deco jr-deco-naji" viewBox="0 0 800 500" aria-hidden focusable="false">
-          <g className="jr-constellation">
-            <path d="M80 380 L210 270 L330 330 L470 190 L610 250 L720 110" pathLength={1} />
-            <path d="M210 270 L260 120 L470 190" pathLength={1} />
-            {[
-              [80, 380],
-              [210, 270],
-              [330, 330],
-              [470, 190],
-              [610, 250],
-              [720, 110],
-              [260, 120],
-            ].map(([x, y]) => (
-              <circle key={`${x}-${y}`} cx={x} cy={y} r={3.2} />
-            ))}
-          </g>
-        </svg>
-        <svg className="jr-deco jr-deco-um" viewBox="0 0 400 400" aria-hidden focusable="false">
-          <circle cx="200" cy="200" r="150" pathLength={1} />
-          <circle cx="200" cy="200" r="100" pathLength={1} />
-          <path d="M200 140 V260 M140 200 H260" pathLength={1} />
-        </svg>
 
         {/* ───── Projects: one presentation system, three panels that turn ───── */}
         {stops.map((s, i) => {

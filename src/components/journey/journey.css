@@ -532,41 +532,6 @@
   transform: translateY(calc(-50% + (1 - var(--pv)) * 30px)) perspective(1100px) rotateY(-11deg) rotateX(3deg);
 }
 
-/* Space decor behind the two later projects (very quiet). */
-.jr-deco {
-  position: absolute;
-  z-index: 1;
-  fill: none;
-  stroke: rgba(201, 174, 131, 0.5);
-  stroke-width: 1;
-  pointer-events: none;
-}
-.jr-deco-naji {
-  right: 3vw;
-  top: 12vh;
-  width: min(52vw, 760px);
-  opacity: calc(var(--deco1, 0) * 0.7);
-}
-.jr-constellation path {
-  stroke-dasharray: 1;
-  stroke-dashoffset: calc(1 - var(--deco1, 0));
-}
-.jr-constellation circle {
-  fill: rgba(244, 230, 200, 0.85);
-  stroke: none;
-}
-.jr-deco-um {
-  right: 8vw;
-  top: 8vh;
-  width: min(38vw, 520px);
-  opacity: calc(var(--deco2, 0) * 0.5);
-}
-.jr-deco-um circle,
-.jr-deco-um path {
-  stroke-dasharray: 1;
-  stroke-dashoffset: calc(1 - var(--deco2, 0));
-}
-
 /* ───── Project presentation system: text on the left, a turning product panel lower right ───── */
 .jr-proj {
   position: absolute;
@@ -688,15 +653,6 @@
     width: min(52vw, 260px);
     max-height: 22svh;
   }
-  .jr-deco-naji {
-    width: 90vw;
-    top: 8vh;
-    right: 3vw;
-  }
-  .jr-deco-um {
-    width: 60vw;
-    top: 7vh;
-  }
   .nw-name {
     font-size: clamp(2.2rem, 11vw, 3.2rem);
   }
@@ -740,7 +696,6 @@
 .jr[data-still="true"] .jr-bg,
 .jr[data-still="true"] .jr-3d,
 .jr[data-still="true"] .jr-scrim,
-.jr[data-still="true"] .jr-deco,
 .jr[data-still="true"] .jr-label-work {
   display: none;
 }
@@ -818,4 +773,16 @@
 .jr .bp-link {
   border-bottom: 0;
   padding-bottom: 0;
+}
+
+/* Without WebGL: a quiet painted Earth and a sparse sky instead of the 3D scene. */
+.jr[data-gl="off"] .jr-3d {
+  background:
+    radial-gradient(circle at 50% 50%, #2a5f93 0, #12385f 22%, #08203a 30%, transparent 31%),
+    radial-gradient(1px 1px at 20% 30%, #fff8 50%, transparent 52%),
+    radial-gradient(1px 1px at 70% 22%, #fff7 50%, transparent 52%),
+    radial-gradient(1px 1px at 85% 68%, #fff6 50%, transparent 52%),
+    radial-gradient(1px 1px at 12% 78%, #fff6 50%, transparent 52%),
+    radial-gradient(1px 1px at 46% 12%, #fff6 50%, transparent 52%);
+  opacity: calc(clamp(0, (var(--c1) - 0.4) * 3, 1));
 }
