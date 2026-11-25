@@ -1899,7 +1899,6 @@ html::-webkit-scrollbar {
   inset: 0;
   z-index: 4;
   pointer-events: none;
-  background: var(--ivory);
   -webkit-mask-image: radial-gradient(circle farthest-corner at 50% 50%, #000 calc(var(--pp) * 118% - 16%), transparent calc(var(--pp) * 118%));
   mask-image: radial-gradient(circle farthest-corner at 50% 50%, #000 calc(var(--pp) * 118% - 16%), transparent calc(var(--pp) * 118%));
 }
@@ -1986,5 +1985,519 @@ html::-webkit-scrollbar {
     top: 66%;
     left: 50%;
     width: min(80vw, 28rem);
+  }
+}
+
+/* ═════════════ Beyond the profile: scroll-drawn world map ═════════════
+   Everything is driven by --bp (0 to 1) set on .beyond by Beyond.tsx. Hero.tsx shows the same
+   environment through its portal, where --bp is unset and falls back to 0. */
+.beyond,
+.hx-portal {
+  --gold: #c9ae83;
+  --gold-hi: #f4e6c8;
+  --bm-w: clamp(1000px, 112vw, 2400px);
+  --sw: 0.5;
+  --nr: 2.1;
+}
+.beyond {
+  position: relative;
+  height: 360svh;
+  background: #070708;
+  color: var(--pearl);
+}
+.beyond-sticky {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  overflow: hidden;
+}
+.beyond-bg {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(60% 70% at 68% 46%, rgba(201, 174, 131, 0.07), transparent 70%),
+    radial-gradient(80% 90% at 70% 45%, #15130f 0%, #0a0a0b 55%, #060607 100%);
+}
+.beyond-map {
+  position: absolute;
+  inset: 0;
+  perspective: 1500px;
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 9%, #000 91%, transparent 100%);
+  mask-image: linear-gradient(90deg, transparent 0, #000 9%, #000 91%, transparent 100%);
+}
+.bm {
+  position: absolute;
+  left: 50%;
+  top: 52%;
+  width: var(--bm-w);
+  max-width: none;
+  height: auto;
+  transform-origin: 50% 60%;
+  transform: translate(-50%, -50%) translateX(calc(-9vw - var(--bp, 0) * 5vw)) rotateX(24deg) scale(calc(1 + var(--bp, 0) * 0.07));
+  overflow: visible;
+}
+.bm-grat {
+  fill: none;
+  stroke: #9a8f7c;
+  stroke-width: 0.25;
+  stroke-opacity: calc(0.07 + clamp(0, var(--bp, 0) * 3, 1) * 0.08);
+}
+.bm-land {
+  stroke: #d3d6dc;
+  stroke-opacity: 0.62;
+  stroke-width: var(--sw);
+  stroke-linejoin: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: calc(1 - clamp(0, (var(--bp, 0) - 0.01 - var(--d, 0)) * 3.2, 1));
+  fill: #b9bfca;
+  fill-opacity: clamp(0, calc((var(--bp, 0) - 0.28) * 0.45), 0.075);
+}
+.bm-arc,
+.bm-pulse {
+  fill: none;
+  stroke: var(--gold);
+  stroke-width: calc(var(--sw) * 0.95);
+  stroke-linecap: round;
+}
+.bm-arc {
+  stroke-opacity: 0.7;
+  stroke-dasharray: 1;
+  stroke-dashoffset: calc(1 - clamp(0, (var(--bp, 0) - var(--t, 0)) * 7, 1));
+}
+.bm-pulse {
+  stroke: var(--gold-hi);
+  stroke-width: calc(var(--sw) * 1.5);
+  stroke-dasharray: 0.045 0.955;
+  opacity: clamp(0, calc((var(--bp, 0) - var(--t, 0) - 0.05) * 12), 0.95);
+  animation: bm-travel 5.5s linear infinite;
+}
+@keyframes bm-travel {
+  from {
+    stroke-dashoffset: 0.045;
+  }
+  to {
+    stroke-dashoffset: -0.955;
+  }
+}
+.bm-node {
+  opacity: clamp(0, calc((var(--bp, 0) - var(--t, 0)) * 14), 1);
+}
+.bm-dot {
+  r: var(--nr);
+  fill: var(--gold-hi);
+}
+.bm-halo {
+  r: calc(var(--nr) * 3.4);
+  fill: rgba(201, 174, 131, 0.14);
+  stroke: rgba(201, 174, 131, 0.55);
+  stroke-width: calc(var(--sw) * 0.8);
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.bm-home .bm-halo {
+  animation: bm-ring 3.4s ease-out infinite;
+}
+@keyframes bm-ring {
+  0% {
+    transform: scale(0.45);
+    opacity: 0.9;
+  }
+  100% {
+    transform: scale(1.7);
+    opacity: 0;
+  }
+}
+.beyond-scrim,
+.hx-portal .beyond-scrim {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, rgba(7, 7, 8, 0.92) 0%, rgba(7, 7, 8, 0.55) 34%, rgba(7, 7, 8, 0) 60%),
+    radial-gradient(75% 75% at 62% 48%, transparent 40%, rgba(5, 5, 6, 0.8) 100%);
+}
+
+.beyond-title {
+  position: absolute;
+  z-index: 3;
+  top: clamp(5.6rem, 9vw, 7rem);
+  left: var(--header-pad-x);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: rgba(243, 239, 230, 0.55);
+  opacity: clamp(0, calc((var(--bp, 0) + 0.02) * 20), 1);
+}
+.beyond-title::before {
+  content: "";
+  width: 2.2rem;
+  height: 1px;
+  background: var(--gold);
+}
+
+.beyond-copy {
+  position: absolute;
+  z-index: 3;
+  left: var(--header-pad-x);
+  top: calc(50% - var(--ov) / 2);
+  width: min(46%, 36rem);
+  transform: translateY(-50%);
+  display: grid;
+}
+.rv {
+  --inr: calc((var(--bp, 0) - var(--a)) / 0.05);
+  --in: clamp(0, var(--inr), 1);
+  --out: clamp(0, calc(1 - (var(--bp, 0) - var(--b)) / 0.05), 1);
+  grid-area: 1 / 1;
+  opacity: min(var(--in), var(--out));
+  transform: translate3d(0, calc((1 - var(--in)) * 26px - (1 - var(--out)) * 18px), 0);
+  pointer-events: none;
+}
+.bp-label {
+  margin: 0 0 1.1rem;
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+.bp-name {
+  margin: 0 0 1.1rem;
+  font-family: var(--font-serif), Georgia, serif;
+  font-weight: 400;
+  font-size: clamp(2.4rem, 5vw, 4.4rem);
+  line-height: 1.02;
+  letter-spacing: -0.01em;
+  color: var(--pearl);
+}
+.bp-line {
+  margin: 0 0 0.35rem;
+  font-size: clamp(0.92rem, 1.15vw, 1.05rem);
+  color: rgba(243, 239, 230, 0.72);
+}
+.bp-terms {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.bp-terms li {
+  --k: 0;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.65rem;
+  padding: 0.7rem 1.15rem;
+  border: 1px solid rgba(201, 174, 131, 0.34);
+  border-radius: 999px;
+  background: rgba(201, 174, 131, 0.035);
+  opacity: clamp(0, calc(var(--inr) - var(--k) * 0.35), 1);
+  transition: border-color 0.4s var(--ease), background 0.4s var(--ease), transform 0.4s var(--ease);
+  pointer-events: auto;
+}
+.bp-terms li:nth-child(2) { --k: 1; }
+.bp-terms li:nth-child(3) { --k: 2; }
+.bp-terms li:nth-child(4) { --k: 3; }
+.bp-terms li:nth-child(5) { --k: 4; }
+.bp-terms li:hover {
+  border-color: var(--gold);
+  background: rgba(201, 174, 131, 0.1);
+  transform: translateY(-2px);
+}
+.bp-idx {
+  font-size: 0.62rem;
+  letter-spacing: 0.2em;
+  color: var(--gold);
+}
+.bp-term {
+  font-family: var(--font-serif), Georgia, serif;
+  font-size: clamp(1.1rem, 1.5vw, 1.4rem);
+  color: var(--pearl);
+}
+.bp-journey {
+  margin: 0 0 1.3rem;
+  max-width: 26rem;
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-weight: 400;
+  font-size: clamp(1.25rem, 2.1vw, 1.9rem);
+  line-height: 1.25;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--pearl);
+}
+.bp-text {
+  margin: 0;
+  max-width: 32rem;
+  font-size: clamp(0.92rem, 1.1vw, 1.02rem);
+  line-height: 1.75;
+  color: rgba(243, 239, 230, 0.7);
+}
+.bp-lead {
+  margin: 0;
+  font-size: clamp(0.95rem, 1.2vw, 1.1rem);
+  color: rgba(243, 239, 230, 0.7);
+}
+.bp-focus {
+  position: relative;
+  display: inline-block;
+  margin: 0.15rem 0 1.3rem;
+  font-family: var(--font-serif), Georgia, serif;
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(2.8rem, 7vw, 6rem);
+  line-height: 1.02;
+  background: linear-gradient(100deg, #f7ecd4 0%, #c9ae83 70%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+.bp-focus::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -0.1em;
+  height: 1px;
+  background: var(--gold);
+  transform-origin: left;
+  transform: scaleX(clamp(0, calc(var(--inr) - 1), 1));
+}
+.bp-link {
+  display: inline-block;
+  font-size: 0.78rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--pearl);
+  border-bottom: 1px solid rgba(243, 239, 230, 0.3);
+  padding-bottom: 0.3rem;
+}
+.beyond:not([data-stage="4"]) .bp-link {
+  pointer-events: none;
+}
+.beyond[data-stage="4"] .bp-link {
+  pointer-events: auto;
+}
+.bp-link:hover {
+  border-color: var(--gold);
+  color: var(--gold-hi);
+}
+
+.beyond-pager {
+  position: absolute;
+  z-index: 3;
+  right: var(--header-pad-x);
+  bottom: calc(var(--ov) + 1.4rem);
+  display: flex;
+  gap: 0.5rem;
+}
+.beyond-pager i {
+  width: 1.8rem;
+  height: 1px;
+  background: rgba(243, 239, 230, 0.22);
+  transition: background 0.5s var(--ease);
+}
+.beyond[data-stage="1"] .beyond-pager i:nth-child(-n + 1),
+.beyond[data-stage="2"] .beyond-pager i:nth-child(-n + 2),
+.beyond[data-stage="3"] .beyond-pager i:nth-child(-n + 3),
+.beyond[data-stage="4"] .beyond-pager i:nth-child(-n + 4) {
+  background: var(--gold);
+}
+
+/* Portrait frame: a tilted plate with a champagne edge. */
+.beyond-photo {
+  position: absolute;
+  z-index: 3;
+  right: var(--header-pad-x);
+  top: calc(50% - var(--ov) / 2);
+  width: clamp(190px, 19vw, 290px);
+  opacity: clamp(0, calc((var(--bp, 0) - 0.08) / 0.05), 1);
+  transform: translateY(calc(-50% + (1 - clamp(0, (var(--bp, 0) - 0.08) / 0.05, 1)) * 30px)) perspective(1100px) rotateY(-11deg) rotateX(3deg);
+}
+.bp-frame {
+  margin: 0;
+}
+.bp-plate {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  border-radius: 10px;
+  border: 1px solid rgba(201, 174, 131, 0.5);
+  background: linear-gradient(150deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.015) 55%, rgba(201, 174, 131, 0.05));
+  box-shadow: 0 40px 80px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+.bp-plate::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(115deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 38%);
+}
+.bp-empty {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.9rem;
+}
+.bp-mono {
+  font-family: var(--font-serif), Georgia, serif;
+  font-style: italic;
+  font-size: clamp(3rem, 6vw, 5rem);
+  line-height: 1;
+  color: rgba(201, 174, 131, 0.4);
+}
+.bp-cap {
+  font-size: 0.6rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: rgba(243, 239, 230, 0.35);
+}
+.bp-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 22%;
+  opacity: 0;
+  transition: opacity 0.6s var(--ease);
+}
+.bp-frame[data-state="ok"] .bp-img {
+  opacity: 1;
+}
+.bp-corner {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border-color: var(--gold);
+  border-style: solid;
+  border-width: 0;
+  opacity: 0.8;
+  z-index: 2;
+}
+.bp-tl {
+  top: 10px;
+  left: 10px;
+  border-top-width: 1px;
+  border-left-width: 1px;
+}
+.bp-br {
+  right: 10px;
+  bottom: 10px;
+  border-bottom-width: 1px;
+  border-right-width: 1px;
+}
+
+/* Hero portal now opens onto this environment instead of a flat colour. */
+.hx-portal {
+  background: #070708;
+}
+.hx-portal .beyond-bg,
+.hx-portal .beyond-map {
+  position: absolute;
+  inset: 0;
+}
+
+/* Portrait and phone */
+@media (max-aspect-ratio: 19/20) {
+  .beyond,
+  .hx-portal {
+    --bm-w: 270vw;
+    --sw: 0.9;
+    --nr: 3.2;
+  }
+  .bm {
+    top: 36%;
+    transform: translate(-50%, -50%) translateX(calc(-59vw - var(--bp, 0) * 5vw)) rotateX(18deg) scale(calc(1 + var(--bp, 0) * 0.06));
+  }
+  .beyond-scrim,
+  .hx-portal .beyond-scrim {
+    background:
+      linear-gradient(0deg, rgba(7, 7, 8, 0.96) 0%, rgba(7, 7, 8, 0.7) 38%, rgba(7, 7, 8, 0) 62%),
+      radial-gradient(90% 60% at 50% 33%, transparent 40%, rgba(5, 5, 6, 0.75) 100%);
+  }
+  .beyond-title {
+    top: clamp(4.6rem, 15vw, 6rem);
+  }
+  .beyond-copy {
+    top: auto;
+    bottom: calc(var(--ov) + 2.4rem);
+    right: var(--header-pad-x);
+    width: auto;
+    transform: none;
+  }
+  .rv {
+    align-self: end;
+  }
+  .beyond-photo {
+    top: clamp(7rem, 24vw, 9rem);
+    width: min(30vw, 150px);
+    transform: translateY(calc((1 - clamp(0, (var(--bp, 0) - 0.08) / 0.05, 1)) * 24px)) perspective(900px) rotateY(-12deg);
+  }
+  .bp-terms {
+    gap: 0.5rem;
+  }
+  .bp-terms li {
+    padding: 0.55rem 0.9rem;
+  }
+}
+
+/* Reduced motion: everything is shown at once, nothing is pinned or animated. */
+@media (prefers-reduced-motion: reduce) {
+  .beyond {
+    --bp: 1;
+    height: auto;
+  }
+  .beyond-sticky {
+    position: relative;
+    height: auto;
+    min-height: 100svh;
+    padding: 8rem var(--header-pad-x) calc(var(--ov) + 4rem);
+    display: grid;
+    gap: 3rem;
+    align-content: start;
+  }
+  .beyond-title,
+  .beyond-copy,
+  .beyond-photo,
+  .beyond-pager {
+    position: relative;
+    inset: auto;
+    transform: none;
+    width: auto;
+    opacity: 1;
+  }
+  .beyond-copy {
+    display: grid;
+    gap: 3rem;
+  }
+  .beyond-photo {
+    width: min(60vw, 260px);
+  }
+  .rv {
+    grid-area: auto;
+    opacity: 1;
+    transform: none;
+    pointer-events: auto;
+  }
+  .bp-link {
+    pointer-events: auto !important;
+  }
+  .beyond-pager {
+    display: none;
+  }
+  .bm-pulse,
+  .bm-home .bm-halo {
+    animation: none;
   }
 }

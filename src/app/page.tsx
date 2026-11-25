@@ -1,4 +1,5 @@
 import { Hero } from "@/components/hero/Hero";
+import { Beyond } from "@/components/beyond/Beyond";
 import { ScrollReveal } from "@/components/ui/ScrollReveal";
 import { Marquee } from "@/components/ui/Marquee";
 import { About } from "@/components/sections/About";
@@ -14,6 +15,7 @@ export default function Home() {
     <>
       <ScrollReveal />
       <Hero />
+      <Beyond />
       <div className="overlap overlap-light" data-tone="light">
         <Marquee items={ticker} />
       </div>

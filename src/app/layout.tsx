@@ -92,7 +92,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} />
         <noscript>
-          <style>{`.preloader{display:none!important}main [style*="opacity: 0"],main [style*="opacity:0"]{opacity:1!important;transform:none!important}.mask>span,.hero2-line>span,.rise{transform:none!important;opacity:1!important}.header{opacity:1!important;transform:none!important}`}</style>
+          <style>{`.preloader{display:none!important}main [style*="opacity: 0"],main [style*="opacity:0"]{opacity:1!important;transform:none!important}.mask>span,.hero2-line>span,.rise{transform:none!important;opacity:1!important}.header{opacity:1!important;transform:none!important}.beyond{height:auto!important}.beyond-sticky{position:relative!important;height:auto!important;padding:8rem 1.5rem 4rem}.beyond-title,.beyond-copy,.beyond-photo{position:relative!important;inset:auto!important;transform:none!important;width:auto!important;opacity:1!important}.rv{grid-area:auto!important;opacity:1!important;transform:none!important}.beyond-pager{display:none}`}</style>
         </noscript>
         <a href="#main" className="skip-link">
           Skip to content

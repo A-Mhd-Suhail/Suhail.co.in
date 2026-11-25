@@ -1,9 +1,12 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useEffect, useRef, useState } from "react";
 import { profile } from "@/content/profile";
 import { useScene } from "@/lib/useScene";
 import { CardFallback } from "./CardFallback";
+
+const WorldMap = dynamic(() => import("../beyond/WorldMap"));
 
 type SceneComponent = typeof import("./CardScene").default;
 
@@ -13,6 +16,7 @@ const LINES = ["Imagine. Innovate.", "Build beyond the boundaries."];
 export function Hero() {
   const host = useRef<HTMLElement>(null);
   const s = useScene(host);
+  const [mapOn, setMapOn] = useState(false);
   const [Scene, setScene] = useState<SceneComponent | null>(null);
   const { gl, onLost } = s;
 
@@ -38,9 +42,8 @@ export function Hero() {
       const total = Math.max(1, el.offsetHeight - window.innerHeight);
       const p = Math.min(1, Math.max(0, -el.getBoundingClientRect().top / total));
       el.style.setProperty("--p", p.toFixed(4));
-      // The ivory portal covers the header at the end, so the header switches to its dark-on-light colours.
-      const tone = p > 0.93 ? "light" : "dark";
-      if (el.dataset.tone !== tone) el.dataset.tone = tone;
+      // Mount the map for the portal only when the card is nearly done, so it costs nothing before that.
+      if (p > 0.55) setMapOn(true);
     };
     const onScroll = () => {
       if (!raf) raf = requestAnimationFrame(update);
@@ -89,8 +92,16 @@ export function Hero() {
           Scroll to enter
         </p>
 
-        {/* Opens at the end of the scroll: the ivory of the next section grows out of the card. */}
-        <div className="hx-portal" aria-hidden />
+        {/* Opens at the end of the scroll onto the map environment, which the next section continues. */}
+        <div className="hx-portal" aria-hidden>
+          <div className="beyond-bg" />
+          {mapOn && (
+            <div className="beyond-map">
+              <WorldMap />
+            </div>
+          )}
+          <div className="beyond-scrim" />
+        </div>
       </div>
     </section>
   );
