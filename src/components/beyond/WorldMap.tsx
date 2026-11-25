@@ -50,7 +50,7 @@ export default function WorldMap() {
         ))}
       </g>
       <g>
-        {NODES.map((n) => (
+        {NODES.filter((n) => n.id in NODE_T).map((n) => (
           <g key={n.id} className={n.id === "in" ? "bm-node bm-home" : "bm-node"} transform={`translate(${n.x} ${n.y})`} style={{ "--t": NODE_T[n.id] } as CSSProperties}>
             <circle className="bm-halo" />
             <circle className="bm-dot" />

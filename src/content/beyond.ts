@@ -12,7 +12,7 @@ export const beyond = {
   },
 
   interests: {
-    label: "Areas of interest",
+    label: "Exploring what's next",
     items: ["Cybersecurity", "Artificial Intelligence", "AI Agents", "Quantum Computing", "Cryptography"],
   },
 
@@ -29,9 +29,9 @@ export const beyond = {
     cta: "About NightBerrieZ",
   },
 
-  /** Drop a portrait at public/images/profile-placeholder.jpg (any name works if you change it here). */
+  /** Drop a portrait at public/images/mohamed-suhail.jpg (any name works if you change it here). */
   photo: {
-    src: "/images/profile-placeholder.jpg",
+    src: "/images/mohamed-suhail.jpg",
     alt: "Portrait of Mohamed Suhail",
     caption: "Portrait",
     initials: "MS",

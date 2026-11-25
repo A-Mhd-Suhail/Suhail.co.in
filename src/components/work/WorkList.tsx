@@ -52,6 +52,9 @@ export function WorkList({ projects }: { projects: Project[] }) {
                 <button type="button" className="text-link as-button" onClick={() => setOpen(p)}>
                   View project
                 </button>
+                <a className="text-link" href={`/work/${p.slug}`} style={{ marginLeft: "1.5rem" }}>
+                  Case study
+                </a>
               </p>
             </div>
           </article>
