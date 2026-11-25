@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import { profile } from "@/content/profile";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
+import { getTier } from "@/lib/deviceTier";
 import { useScene } from "@/lib/useScene";
 import { CardFallback } from "./CardFallback";
 
@@ -16,15 +18,37 @@ export function Hero() {
   const [Scene, setScene] = useState<SceneComponent | null>(null);
   const { gl, onLost } = s;
 
-  // Load the 3D bundle only when WebGL exists. If the download fails, show the static drawing.
+  // The static card is in the HTML from the first byte. The 3D bundle is fetched after hydration, when the
+  // browser is idle (and after the load event on slow or data-saver connections), then fades in over it.
   useEffect(() => {
     if (gl !== "ok") return;
     let cancelled = false;
-    import("./CardScene")
-      .then((m) => !cancelled && setScene(() => m.default))
-      .catch(() => !cancelled && onLost());
+    let idle = 0;
+    let timer = 0;
+    const load = () =>
+      import("./CardScene")
+        .then((m) => !cancelled && setScene(() => m.default))
+        .catch(() => !cancelled && onLost());
+    const start = () => {
+      if (cancelled) return;
+      // Weaker devices get a longer head start for hydration and first scrolling before the 3D bundle runs.
+      const tier = getTier();
+      const lead = tier === "low" ? 2600 : tier === "mid" ? 700 : 0;
+      timer = window.setTimeout(() => {
+        if (cancelled) return;
+        if (typeof window.requestIdleCallback === "function") idle = window.requestIdleCallback(load, { timeout: 1500 });
+        else load();
+      }, lead);
+    };
+    const conn = (navigator as Navigator & { connection?: { saveData?: boolean; effectiveType?: string } }).connection;
+    const slow = !!conn?.saveData || /(^|-)2g|3g/.test(conn?.effectiveType ?? "");
+    if (slow && document.readyState !== "complete") window.addEventListener("load", start, { once: true });
+    else start();
     return () => {
       cancelled = true;
+      window.removeEventListener("load", start);
+      window.clearTimeout(timer);
+      if (idle && typeof window.cancelIdleCallback === "function") window.cancelIdleCallback(idle);
     };
   }, [gl, onLost]);
 
@@ -60,11 +84,13 @@ export function Hero() {
           <div className="hero2-glow" />
         </div>
 
-        <div className={`hero2-stage ${s.ready || s.gl === "unavailable" ? "is-ready" : ""}`} aria-hidden>
+        <div className="hero2-stage is-ready" data-3d={s.ready && s.gl === "ok" ? "true" : "false"} aria-hidden>
+          <CardFallback />
           {s.gl === "ok" && Scene && (
-            <Scene pointer={s.pointer} reduced={s.reduced} active={s.active} onReady={s.onReady} onLost={s.onLost} />
+            <ErrorBoundary onError={s.onLost}>
+              <Scene pointer={s.pointer} reduced={s.reduced} active={s.active} onReady={s.onReady} onLost={s.onLost} />
+            </ErrorBoundary>
           )}
-          {s.gl === "unavailable" && <CardFallback />}
         </div>
 
         <div className="hx-copy">

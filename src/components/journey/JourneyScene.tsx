@@ -3,6 +3,7 @@
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
+import type { Tier } from "@/lib/deviceTier";
 import { makeDetailBump, makeEarthMaps, makeGasTexture, makeRingTexture, makeRockTexture, makeSpaceBackdrop, type EarthMaps } from "./textures";
 
 export interface JourneyCtl {
@@ -117,7 +118,13 @@ void main(){
 
 /* ───────────── Pieces ───────────── */
 
-function useAssets() {
+const SIZES = {
+  high: { earth: 2048, rock: 1024, gas: 1024, sky: 1024 },
+  mid: { earth: 1024, rock: 512, gas: 512, sky: 512 },
+  low: { earth: 768, rock: 256, gas: 256, sky: 256 },
+} as const;
+
+function useAssets(tier: Tier) {
   const [assets, setAssets] = useState<null | {
     earth: EarthMaps;
     backdrop: THREE.Texture;
@@ -131,12 +138,13 @@ function useAssets() {
     let cancelled = false;
     const made: THREE.Texture[] = [];
     (async () => {
-      const earth = await makeEarthMaps();
+      const z = SIZES[tier];
+      const earth = await makeEarthMaps(z.earth);
       made.push(earth.day, earth.night, earth.cloud);
-      const backdrop = await makeSpaceBackdrop();
-      const rock0 = await makeRockTexture({ tint: [150, 148, 144], mare: 1, craters: 420, seed: 5 });
-      const rock2 = await makeRockTexture({ tint: [168, 136, 86], mare: 0.4, craters: 160, seed: 41 });
-      const gas = await makeGasTexture(["#1f3f58", "#2f5b77", "#7fa6ba", "#294f6c", "#a9c4d0", "#315f7e"], 9);
+      const backdrop = await makeSpaceBackdrop(z.sky);
+      const rock0 = await makeRockTexture({ tint: [150, 148, 144], mare: 1, craters: 420, seed: 5, size: z.rock });
+      const rock2 = await makeRockTexture({ tint: [168, 136, 86], mare: 0.4, craters: 160, seed: 41, size: z.rock });
+      const gas = await makeGasTexture(["#1f3f58", "#2f5b77", "#7fa6ba", "#294f6c", "#a9c4d0", "#315f7e"], 9, z.gas);
       const ring = makeRingTexture();
       const bump = makeDetailBump();
       made.push(backdrop, rock0, rock2, gas, ring, bump);
@@ -150,7 +158,7 @@ function useAssets() {
       cancelled = true;
       made.forEach((t) => t.dispose());
     };
-  }, []);
+  }, [tier]);
   return assets;
 }
 
@@ -201,9 +209,11 @@ function ringGeometry(inner: number, outer: number) {
   return g;
 }
 
-function Scene({ ctl, mobile }: { ctl: JourneyCtl; mobile: boolean }) {
-  const assets = useAssets();
-  const { invalidate, gl } = useThree();
+function Scene({ ctl, tier }: { ctl: JourneyCtl; tier: Tier }) {
+  const assets = useAssets(tier);
+  const { invalidate, gl, setDpr } = useThree();
+  const seg = tier === "high" ? 1 : tier === "mid" ? 0.75 : 0.5;
+  const frameMs = useRef({ avg: 16, n: 0, lowered: false });
 
   const backdrop = useRef<THREE.Mesh>(null);
   const stars = useRef<THREE.Points>(null);
@@ -211,7 +221,7 @@ function Scene({ ctl, mobile }: { ctl: JourneyCtl; mobile: boolean }) {
   const worlds = [useRef<THREE.Group>(null), useRef<THREE.Group>(null), useRef<THREE.Group>(null)];
   const orbit = useRef<THREE.Line>(null);
 
-  const starGeo = useMemo(() => makeStars(mobile ? 650 : 1700), [mobile]);
+  const starGeo = useMemo(() => makeStars(tier === "high" ? 1700 : tier === "mid" ? 900 : 450), [tier]);
   const starMat = useMemo(
     () =>
       new THREE.ShaderMaterial({
@@ -306,8 +316,15 @@ function Scene({ ctl, mobile }: { ctl: JourneyCtl; mobile: boolean }) {
   const l0 = useMemo(() => new THREE.Vector3(), []);
   const l1 = useMemo(() => new THREE.Vector3(), []);
 
-  useFrame(({ camera, size }) => {
+  useFrame(({ camera, size }, delta) => {
     if (!assets || !mats) return;
+    // Runtime guard: if frames are consistently slow, drop the pixel ratio once. Quality steps down, nothing switches off.
+    const fm = frameMs.current;
+    fm.avg += (delta * 1000 - fm.avg) * 0.15;
+    if (++fm.n > 14 && !fm.lowered && fm.avg > 46) {
+      fm.lowered = true;
+      setDpr(1);
+    }
     const cam = camera as THREE.PerspectiveCamera;
     const { u1, s } = ctl;
     const portrait = size.width / size.height < 0.95;
@@ -401,11 +418,11 @@ function Scene({ ctl, mobile }: { ctl: JourneyCtl; mobile: boolean }) {
 
       <group ref={earth} visible={false}>
         <mesh>
-          <sphereGeometry args={[1, mobile ? 72 : 128, mobile ? 48 : 96]} />
+          <sphereGeometry args={[1, Math.round(128 * seg), Math.round(96 * seg)]} />
           <primitive object={mats.earth} attach="material" />
         </mesh>
         <mesh scale={1.075}>
-          <sphereGeometry args={[1, 64, 48]} />
+          <sphereGeometry args={[1, Math.round(64 * seg), Math.round(48 * seg)]} />
           <primitive object={mats.earthAtmo} attach="material" />
         </mesh>
       </group>
@@ -413,7 +430,7 @@ function Scene({ ctl, mobile }: { ctl: JourneyCtl; mobile: boolean }) {
       {/* 1. MoonNav: a grey, cratered world */}
       <group ref={worlds[0]} position={WORLDS[0].pos} visible={false}>
         <mesh>
-          <sphereGeometry args={[WORLDS[0].r, 96, 64]} />
+          <sphereGeometry args={[WORLDS[0].r, Math.round(96 * seg), Math.round(64 * seg)]} />
           <meshStandardMaterial map={assets.rock0} bumpMap={assets.bump} bumpScale={1.4} roughness={1} metalness={0} />
         </mesh>
       </group>
@@ -421,7 +438,7 @@ function Scene({ ctl, mobile }: { ctl: JourneyCtl; mobile: boolean }) {
       {/* 2. Naji Learning: a calm blue giant with a thin ring */}
       <group ref={worlds[1]} position={WORLDS[1].pos} visible={false}>
         <mesh>
-          <sphereGeometry args={[WORLDS[1].r, 96, 64]} />
+          <sphereGeometry args={[WORLDS[1].r, Math.round(96 * seg), Math.round(64 * seg)]} />
           <meshStandardMaterial map={assets.gas} roughness={0.95} metalness={0} />
         </mesh>
         <mesh scale={1.05}>
@@ -436,7 +453,7 @@ function Scene({ ctl, mobile }: { ctl: JourneyCtl; mobile: boolean }) {
       {/* 3. United Medication: a dark bronze world */}
       <group ref={worlds[2]} position={WORLDS[2].pos} visible={false}>
         <mesh>
-          <sphereGeometry args={[WORLDS[2].r, 96, 64]} />
+          <sphereGeometry args={[WORLDS[2].r, Math.round(96 * seg), Math.round(64 * seg)]} />
           <meshStandardMaterial map={assets.rock2} bumpMap={assets.bump} bumpScale={0.9} roughness={0.92} metalness={0.05} />
         </mesh>
         <mesh scale={1.05}>
@@ -450,21 +467,20 @@ function Scene({ ctl, mobile }: { ctl: JourneyCtl; mobile: boolean }) {
   );
 }
 
-export default function JourneyScene({ ctl }: { ctl: JourneyCtl }) {
-  const mobile = typeof window !== "undefined" && window.innerWidth < 760;
+export default function JourneyScene({ ctl, tier }: { ctl: JourneyCtl; tier: Tier }) {
   return (
     <Canvas
       frameloop="demand"
-      dpr={mobile ? [1, 1.25] : [1, 1.75]}
+      dpr={tier === "high" ? [1, 1.75] : tier === "mid" ? [1, 1.35] : [1, 1]}
       camera={{ fov: 35, near: 0.1, far: 600, position: [0, 0, EARTH_Z0] }}
-      gl={{ alpha: true, antialias: !mobile, powerPreference: "default" }}
+      gl={{ alpha: true, antialias: tier !== "low", powerPreference: "default" }}
       onCreated={({ invalidate }) => {
         ctl.invalidate = invalidate;
         invalidate();
       }}
       style={{ position: "absolute", inset: 0 }}
     >
-      <Scene ctl={ctl} mobile={mobile} />
+      <Scene ctl={ctl} tier={tier} />
     </Canvas>
   );
 }

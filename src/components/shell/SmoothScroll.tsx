@@ -1,6 +1,6 @@
 "use client";
 
-import Lenis from "lenis";
+import type Lenis from "lenis";
 import "lenis/dist/lenis.css";
 import { useEffect } from "react";
 
@@ -47,10 +47,22 @@ export function SmoothScroll() {
 
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     let lenis: Lenis | undefined;
+    let cancelled = false;
+    let idle = 0;
+    // Lenis (inertial wheel scrolling) is a nicety: load it when the browser is idle, never before first paint.
+    const startLenis = () => {
+      import("lenis")
+        .then(({ default: LenisCtor }) => {
+          if (cancelled) return;
+          lenis = new LenisCtor({ autoRaf: true, lerp: 0.085, wheelMultiplier: 0.95 });
+          if (isReload) lenis.scrollTo(0, { immediate: true });
+          window.__lenis = lenis;
+        })
+        .catch(() => undefined);
+    };
     if (!reduced) {
-      lenis = new Lenis({ autoRaf: true, lerp: 0.085, wheelMultiplier: 0.95 });
-      if (isReload) lenis.scrollTo(0, { immediate: true });
-      window.__lenis = lenis;
+      if (typeof window.requestIdleCallback === "function") idle = window.requestIdleCallback(startLenis, { timeout: 2000 });
+      else idle = window.setTimeout(startLenis, 400);
     }
 
     const onClick = (e: MouseEvent) => {
@@ -73,6 +85,9 @@ export function SmoothScroll() {
     if (initial) window.setTimeout(() => scrollToHash(initial), 1700);
 
     return () => {
+      cancelled = true;
+      if (typeof window.cancelIdleCallback === "function") window.cancelIdleCallback(idle);
+      else window.clearTimeout(idle);
       document.removeEventListener("click", onClick);
       lenis?.destroy();
       delete window.__lenis;

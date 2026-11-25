@@ -1,63 +1,61 @@
 "use client";
 
-import { useReducedMotion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import { profile } from "@/content/profile";
+import { useReducedMotion } from "@/lib/useReducedMotion";
 
 /**
- * Lusion-style loader: a thin bar fills left to right while a percentage counts up in the corner.
- * It waits for the page and fonts (never less than ~0.9s, never more than 3s), then the panel lifts
- * away and sets html.is-loaded so the hero can animate in. A CSS animation clears it if scripts never run.
+ * Short intro curtain. The page content is already in the HTML underneath it, so this never gates anything:
+ * it lifts as soon as scripts have run and fonts are ready (not on window "load", which waits for every
+ * image), after at least ~0.5s so the bar can be seen, and a CSS animation clears it if scripts never run.
+ * The bar and the counter are updated directly on the DOM, so there is no React re-render per frame.
  */
 export function Preloader() {
-  const reduced = useReducedMotion() ?? false;
+  const reduced = useReducedMotion();
   const [done, setDone] = useState(false);
-  const [pct, setPct] = useState(0);
   const bar = useRef<HTMLSpanElement>(null);
+  const count = useRef<HTMLParagraphElement>(null);
 
   useEffect(() => {
     const root = document.documentElement;
     const started = performance.now();
-    const minimum = reduced ? 150 : 900;
+    const minimum = reduced ? 120 : 520;
     let finished = false;
     let raf = 0;
-    let end = 0;
+    let timer = 0;
 
-    // Progress eases towards 100 while we wait; it snaps to 100 when the page is ready.
+    const paint = (v: number) => {
+      bar.current?.style.setProperty("--p", String(v));
+      if (count.current) count.current.textContent = String(Math.round(v * 100)).padStart(3, "0");
+    };
     const tick = (now: number) => {
-      const target = finished ? 1 : Math.min(0.92, (now - started) / minimum);
-      const value = finished ? 1 : target;
-      const shown = Math.round(value * 100);
-      setPct(shown);
-      if (bar.current) bar.current.style.setProperty("--p", String(value));
-      if (!finished || now < end) raf = requestAnimationFrame(tick);
+      paint(Math.min(0.92, (now - started) / minimum));
+      if (!finished) raf = requestAnimationFrame(tick);
     };
     raf = requestAnimationFrame(tick);
 
     const finish = () => {
       if (finished) return;
       finished = true;
-      const wait = Math.max(0, minimum - (performance.now() - started));
-      end = performance.now() + wait;
-      window.setTimeout(() => {
-        setDone(true);
-        root.classList.add("is-loaded");
-      }, wait);
+      cancelAnimationFrame(raf);
+      paint(1);
+      timer = window.setTimeout(
+        () => {
+          setDone(true);
+          root.classList.add("is-loaded");
+        },
+        Math.max(0, minimum - (performance.now() - started)),
+      );
     };
 
-    const ready = () => Promise.race([document.fonts?.ready ?? Promise.resolve(), new Promise((r) => setTimeout(r, 1800))]);
-    const onLoaded = () => ready().then(finish);
-    if (document.readyState === "complete") onLoaded();
-    else window.addEventListener("load", onLoaded, { once: true });
-
-    const failsafe = window.setTimeout(() => {
-      finished = false;
-      finish();
-    }, 3000);
+    const fonts = document.fonts?.ready ?? Promise.resolve();
+    Promise.race([fonts, new Promise((r) => setTimeout(r, 900))]).then(finish);
+    const failsafe = window.setTimeout(finish, 1800);
     return () => {
+      finished = true;
       cancelAnimationFrame(raf);
+      window.clearTimeout(timer);
       window.clearTimeout(failsafe);
-      window.removeEventListener("load", onLoaded);
     };
   }, [reduced]);
 
@@ -67,8 +65,8 @@ export function Preloader() {
       <span className="preloader-line" aria-hidden>
         <span ref={bar} />
       </span>
-      <p className="preloader-count" aria-hidden>
-        {String(pct).padStart(3, "0")}
+      <p ref={count} className="preloader-count" aria-hidden>
+        000
       </p>
     </div>
   );

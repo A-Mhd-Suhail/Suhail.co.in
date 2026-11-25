@@ -1,42 +1,43 @@
 "use client";
 
-import { motion } from "motion/react";
-import type { ReactNode } from "react";
+import { useEffect, useRef, type CSSProperties, type ElementType, type ReactNode } from "react";
 
-const EASE = [0.2, 0.7, 0.1, 1] as const;
+/** Adds `is-in` once the element scrolls into view. Without IntersectionObserver or with reduced motion it shows at once. */
+function useReveal<T extends HTMLElement>() {
+  const ref = useRef<T>(null);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    if (!("IntersectionObserver" in window) || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      el.classList.add("is-in");
+      return;
+    }
+    const io = new IntersectionObserver(
+      ([e]) => {
+        if (!e.isIntersecting) return;
+        el.classList.add("is-in");
+        io.disconnect();
+      },
+      { rootMargin: "0px 0px -8% 0px" },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+  return ref;
+}
 
 /** Headline whose lines rise out of a mask when scrolled into view. Pass one string per line. */
-export function Headline({
-  lines,
-  as = "h2",
-  className,
-}: {
-  lines: string[];
-  as?: "h1" | "h2" | "h3";
-  className?: string;
-}) {
-  const Tag = motion[as];
-  // The heading itself is the scroll trigger. Observing the moving line would never fire once it is
-  // pushed fully outside its own clipping mask (which happens whenever a line wraps on a phone).
+export function Headline({ lines, as = "h2", className }: { lines: string[]; as?: "h1" | "h2" | "h3"; className?: string }) {
+  const ref = useReveal<HTMLHeadingElement>();
+  const Tag = as as ElementType;
+  // The heading itself is the trigger: a line pushed fully outside its own mask would never intersect.
   return (
-    <Tag
-      className={className}
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true, margin: "0px 0px -8% 0px" }}
-    >
+    <Tag ref={ref} className={className}>
       {lines.map((line, i) => (
         <span className="mask" key={line}>
-          <motion.span
-            className="mask-inner"
-            style={{ display: "block" }}
-            variants={{
-              hidden: { y: "108%" },
-              visible: { y: "0%", transition: { duration: 0.95, delay: i * 0.1, ease: EASE } },
-            }}
-          >
+          <span className="mask-inner" style={{ display: "block", "--hd": `${i * 0.1}s` } as CSSProperties}>
             {line}{" "}
-          </motion.span>
+          </span>
         </span>
       ))}
     </Tag>
@@ -45,15 +46,10 @@ export function Headline({
 
 /** Quiet fade for supporting blocks. Use sparingly. */
 export function Fade({ children, delay = 0, className }: { children: ReactNode; delay?: number; className?: string }) {
+  const ref = useReveal<HTMLDivElement>();
   return (
-    <motion.div
-      className={`fade-block ${className ?? ""}`}
-      initial={{ opacity: 0 }}
-      whileInView={{ opacity: 1 }}
-      viewport={{ once: true, margin: "0px 0px -8% 0px" }}
-      transition={{ duration: 0.9, delay, ease: EASE }}
-    >
+    <div ref={ref} className={`fade-block ${className ?? ""}`} style={{ "--hd": `${delay}s` } as CSSProperties}>
       {children}
-    </motion.div>
+    </div>
   );
 }

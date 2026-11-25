@@ -1,6 +1,6 @@
 "use client";
 
-import { useReducedMotion } from "motion/react";
+import { useReducedMotion } from "@/lib/useReducedMotion";
 import { useCallback, useEffect, useRef, useState, type RefObject } from "react";
 
 type GLState = "checking" | "ok" | "unavailable";
@@ -23,7 +23,7 @@ function detectWebGL(): boolean {
  * - smoothed pointer in [-1, 1] (mouse only), scroll progress of the host element
  */
 export function useScene(host: RefObject<HTMLElement | null>) {
-  const reduced = useReducedMotion() ?? false;
+  const reduced = useReducedMotion();
   const [gl, setGl] = useState<GLState>("checking");
   const [inView, setInView] = useState(true);
   const [pageVisible, setPageVisible] = useState(true);

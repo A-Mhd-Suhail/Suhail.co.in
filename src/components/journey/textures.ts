@@ -8,6 +8,16 @@ import { EARTH_LAND } from "./earthLand";
  */
 
 const tick = () => new Promise<void>((r) => setTimeout(r, 0));
+/** Hands control back to the browser whenever ~7ms have passed, so generation never forms a long task. */
+let sliceStart = 0;
+const maybeYield = async () => {
+  const now = performance.now();
+  if (!sliceStart) sliceStart = now;
+  if (now - sliceStart > 7) {
+    await tick();
+    sliceStart = performance.now();
+  }
+};
 
 function mulberry32(seed: number) {
   let a = seed >>> 0;
@@ -103,9 +113,9 @@ export interface EarthMaps {
   cloud: THREE.CanvasTexture;
 }
 
-export async function makeEarthMaps(): Promise<EarthMaps> {
-  const W = 2048;
-  const H = 1024;
+export async function makeEarthMaps(W = 2048): Promise<EarthMaps> {
+  const H = W / 2;
+  const k = W / 2048;
 
   // 1. Land mask from the real coastlines.
   const mc = makeCanvas(W, H);
@@ -113,6 +123,7 @@ export async function makeEarthMaps(): Promise<EarthMaps> {
   mctx.fillStyle = "#000";
   mctx.fillRect(0, 0, W, H);
   mctx.fillStyle = "#fff";
+  mctx.scale(k, k);
   mctx.fill(new Path2D(EARTH_LAND));
   const md = mctx.getImageData(0, 0, W, H).data;
   const land = new Float32Array(W * H);
@@ -120,9 +131,11 @@ export async function makeEarthMaps(): Promise<EarthMaps> {
   await tick();
 
   // Soft coast (for the shallow-water rim) and a wider one (for the continental shelf).
-  const coast = blur(blur(land, W, H, 2), W, H, 2);
+  const r1 = Math.max(1, Math.round(2 * k));
+  const r2 = Math.max(2, Math.round(9 * k));
+  const coast = blur(blur(land, W, H, r1), W, H, r1);
   await tick();
-  const shelf = blur(blur(land, W, H, 9), W, H, 9);
+  const shelf = blur(blur(land, W, H, r2), W, H, r2);
   await tick();
 
   // 2. Height and colour.
@@ -147,8 +160,8 @@ export async function makeEarthMaps(): Promise<EarthMaps> {
   const ice = hex("#e6ecef");
 
   // Heights first (needed for hill shading), in slices.
-  for (let y0 = 0; y0 < H; y0 += 64) {
-    for (let y = y0; y < Math.min(H, y0 + 64); y++) {
+  for (let y = 0; y < H; y++) {
+    {
       const v = y / H;
       for (let x = 0; x < W; x++) {
         const i = y * W + x;
@@ -158,11 +171,11 @@ export async function makeEarthMaps(): Promise<EarthMaps> {
         height[i] = land[i] > 0.5 ? clamp01(0.18 + f * 0.55 + Math.pow(ridge, 3) * 0.4 * smoothstep(0.35, 0.75, f)) * smoothstep(0.35, 0.9, coast[i]) : 0;
       }
     }
-    await tick();
+    await maybeYield();
   }
 
-  for (let y0 = 0; y0 < H; y0 += 64) {
-    for (let y = y0; y < Math.min(H, y0 + 64); y++) {
+  for (let y = 0; y < H; y++) {
+    {
       const v = y / H;
       const lat = (0.5 - v) * Math.PI;
       const alat = Math.abs(lat);
@@ -201,7 +214,7 @@ export async function makeEarthMaps(): Promise<EarthMaps> {
         dd[o + 3] = 255;
       }
     }
-    await tick();
+    await maybeYield();
   }
   dctx.putImageData(dimg, 0, 0);
 
@@ -211,8 +224,8 @@ export async function makeEarthMaps(): Promise<EarthMaps> {
   const nimg = nctx.createImageData(W, H);
   const nd = nimg.data;
   const nC = [makeNoise(131, 40, 20), makeNoise(149, 150, 75), makeNoise(167, 400, 200)];
-  for (let y0 = 0; y0 < H; y0 += 64) {
-    for (let y = y0; y < Math.min(H, y0 + 64); y++) {
+  for (let y = 0; y < H; y++) {
+    {
       const v = y / H;
       const alat = Math.abs((0.5 - v) * Math.PI);
       const band = smoothstep(1.15, 0.75, alat) * smoothstep(0.02, 0.2, alat + 0.1);
@@ -232,7 +245,7 @@ export async function makeEarthMaps(): Promise<EarthMaps> {
         nd[o + 3] = 255;
       }
     }
-    await tick();
+    await maybeYield();
   }
   nctx.putImageData(nimg, 0, 0);
 
@@ -243,8 +256,8 @@ export async function makeEarthMaps(): Promise<EarthMaps> {
   const cd = cimg.data;
   const nW = makeNoise(201, 10, 5);
   const nCl = [makeNoise(211, 12, 6), makeNoise(223, 30, 15), makeNoise(239, 72, 36), makeNoise(251, 150, 75)];
-  for (let y0 = 0; y0 < H; y0 += 64) {
-    for (let y = y0; y < Math.min(H, y0 + 64); y++) {
+  for (let y = 0; y < H; y++) {
+    {
       const v = y / H;
       const lat = (0.5 - v) * Math.PI;
       const band = 0.62 + 0.5 * Math.cos(lat * 3.6 - 0.4) * Math.cos(lat * 0.9);
@@ -263,7 +276,7 @@ export async function makeEarthMaps(): Promise<EarthMaps> {
         cd[o + 3] = 255;
       }
     }
-    await tick();
+    await maybeYield();
   }
   cctx.putImageData(cimg, 0, 0);
 
@@ -303,16 +316,17 @@ function craters(ctx: CanvasRenderingContext2D, W: number, H: number, count: num
 }
 
 /** A cratered rocky world. `tint` shifts the regolith colour; `maria` adds large dark plains. */
-export async function makeRockTexture(opts: { tint: RGB; mare: number; craters: number; seed: number }): Promise<THREE.CanvasTexture> {
-  const W = 1024;
-  const H = 512;
+export async function makeRockTexture(opts: { tint: RGB; mare: number; craters: number; seed: number; size?: number }): Promise<THREE.CanvasTexture> {
+  const W = opts.size ?? 1024;
+  const H = W / 2;
+  const k = W / 1024;
   const c = makeCanvas(W, H);
   const ctx = c.getContext("2d")!;
   const img = ctx.createImageData(W, H);
   const d = img.data;
   const n = [makeNoise(opts.seed, 8, 4), makeNoise(opts.seed + 4, 26, 13), makeNoise(opts.seed + 9, 80, 40), makeNoise(opts.seed + 15, 220, 110)];
-  for (let y0 = 0; y0 < H; y0 += 64) {
-    for (let y = y0; y < Math.min(H, y0 + 64); y++) {
+  for (let y = 0; y < H; y++) {
+    {
       const v = y / H;
       for (let x = 0; x < W; x++) {
         const f = fbm(n, x / W, v);
@@ -325,12 +339,12 @@ export async function makeRockTexture(opts: { tint: RGB; mare: number; craters: 
         d[o + 3] = 255;
       }
     }
-    await tick();
+    await maybeYield();
   }
   ctx.putImageData(img, 0, 0);
-  craters(ctx, W, H, 14, opts.seed + 1, 22, 56);
-  craters(ctx, W, H, Math.round(opts.craters * 0.25), opts.seed + 2, 6, 22);
-  craters(ctx, W, H, opts.craters, opts.seed + 3, 2, 8);
+  craters(ctx, W, H, 14, opts.seed + 1, 22 * k, 56 * k);
+  craters(ctx, W, H, Math.round(opts.craters * 0.25 * Math.max(0.4, k)), opts.seed + 2, 6 * k, 22 * k);
+  craters(ctx, W, H, Math.round(opts.craters * Math.max(0.3, k)), opts.seed + 3, Math.max(1.2, 2 * k), 8 * k);
   const t = new THREE.CanvasTexture(c);
   t.colorSpace = THREE.SRGBColorSpace;
   t.wrapS = THREE.RepeatWrapping;
@@ -363,9 +377,8 @@ export function makeDetailBump(): THREE.CanvasTexture {
 }
 
 /** A calm banded giant. */
-export async function makeGasTexture(palette: string[], seed: number): Promise<THREE.CanvasTexture> {
-  const W = 1024;
-  const H = 512;
+export async function makeGasTexture(palette: string[], seed: number, W = 1024): Promise<THREE.CanvasTexture> {
+  const H = W / 2;
   const c = makeCanvas(W, H);
   const ctx = c.getContext("2d")!;
   const img = ctx.createImageData(W, H);
@@ -373,8 +386,8 @@ export async function makeGasTexture(palette: string[], seed: number): Promise<T
   const cols = palette.map(hex);
   const nb = makeNoise(seed, 1, 28);
   const nw = [makeNoise(seed + 3, 6, 6), makeNoise(seed + 5, 20, 20), makeNoise(seed + 8, 60, 60)];
-  for (let y0 = 0; y0 < H; y0 += 64) {
-    for (let y = y0; y < Math.min(H, y0 + 64); y++) {
+  for (let y = 0; y < H; y++) {
+    {
       const v = y / H;
       for (let x = 0; x < W; x++) {
         const u = x / W;
@@ -391,7 +404,7 @@ export async function makeGasTexture(palette: string[], seed: number): Promise<T
         d[o + 3] = 255;
       }
     }
-    await tick();
+    await maybeYield();
   }
   ctx.putImageData(img, 0, 0);
   const t = new THREE.CanvasTexture(c);
@@ -420,9 +433,8 @@ export function makeRingTexture(): THREE.CanvasTexture {
 }
 
 /** Deep-space backdrop (equirectangular): faint nebulae, a dim Milky Way band and a few distant galaxies. */
-export async function makeSpaceBackdrop(): Promise<THREE.CanvasTexture> {
-  const W = 1024;
-  const H = 512;
+export async function makeSpaceBackdrop(W = 1024): Promise<THREE.CanvasTexture> {
+  const H = W / 2;
   const c = makeCanvas(W, H);
   const ctx = c.getContext("2d")!;
   const img = ctx.createImageData(W, H);
@@ -433,8 +445,8 @@ export async function makeSpaceBackdrop(): Promise<THREE.CanvasTexture> {
   const blue: RGB = [34, 78, 170];
   const teal: RGB = [18, 120, 140];
   const violet: RGB = [96, 54, 150];
-  for (let y0 = 0; y0 < H; y0 += 64) {
-    for (let y = y0; y < Math.min(H, y0 + 64); y++) {
+  for (let y = 0; y < H; y++) {
+    {
       const v = y / H;
       for (let x = 0; x < W; x++) {
         const u = x / W;
@@ -473,7 +485,7 @@ export async function makeSpaceBackdrop(): Promise<THREE.CanvasTexture> {
         d[o + 3] = Math.min(255, al * 255);
       }
     }
-    await tick();
+    await maybeYield();
   }
   ctx.putImageData(img, 0, 0);
 

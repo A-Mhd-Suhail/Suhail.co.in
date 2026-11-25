@@ -2,6 +2,7 @@
 
 import { Canvas, useFrame } from "@react-three/fiber";
 import { Environment, Lightformer } from "@react-three/drei";
+import { getTier } from "@/lib/deviceTier";
 import { useEffect, useMemo, useRef, type RefObject } from "react";
 import * as THREE from "three";
 import { profile } from "@/content/profile";
@@ -326,12 +327,13 @@ export default function CardScene({
   onReady: () => void;
   onLost: () => void;
 }) {
+  const tier = getTier();
   return (
     <Canvas
       frameloop={active ? "always" : "never"}
-      dpr={[1, 1.75]}
+      dpr={tier === "high" ? [1, 1.75] : tier === "mid" ? [1, 1.35] : [1, 1]}
       camera={{ position: [0, 0, 6], fov: 30, near: 0.1, far: 60 }}
-      gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
+      gl={{ antialias: tier !== "low", alpha: true, powerPreference: "high-performance" }}
       onCreated={({ gl }) => {
         gl.toneMappingExposure = 1.05;
         gl.setClearColor(0x000000, 0);
@@ -342,7 +344,7 @@ export default function CardScene({
     >
       <ambientLight intensity={0.12} />
       <directionalLight position={[-3, 4, 5]} intensity={0.9} color="#fff4e6" />
-      <Environment resolution={256} frames={1}>
+      <Environment resolution={tier === "low" ? 128 : 256} frames={1}>
         {/* A tall softbox and two thin strips: they sweep across the brushed face and the silver edge as the card turns. */}
         <Lightformer form="rect" intensity={2.6} color="#ffffff" position={[-4, 3, 3]} rotation={[0, 0.7, 0.4]} scale={[3, 9, 1]} />
         <Lightformer form="rect" intensity={1.6} color="#f1ece3" position={[5, 1, 2]} rotation={[0, -1.1, 0]} scale={[1.4, 8, 1]} />

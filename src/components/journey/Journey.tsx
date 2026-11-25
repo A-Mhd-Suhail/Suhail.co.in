@@ -1,7 +1,10 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import Image from "next/image";
 import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from "react";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
+import { getTier, type Tier } from "@/lib/deviceTier";
 import { beyond } from "@/content/beyond";
 import { network } from "@/content/network";
 import { publicProjects, type Project } from "@/content/projects";
@@ -9,7 +12,8 @@ import { ProfilePhoto } from "../beyond/ProfilePhoto";
 import type { JourneyCtl } from "./JourneyScene";
 import "./journey.css";
 
-const WorldMap = dynamic(() => import("../beyond/WorldMap"));
+// The map is decorative and hidden until the intro opens: render it on the client so it adds nothing to the HTML.
+const WorldMap = dynamic(() => import("../beyond/WorldMap"), { ssr: false });
 const JourneyScene = dynamic(() => import("./JourneyScene"), { ssr: false });
 
 /**
@@ -53,6 +57,9 @@ export function Journey() {
   const root = useRef<HTMLElement>(null);
   const ctl = useRef<JourneyCtl>({ u1: 0, s: 0 });
   const [scene, setScene] = useState(false);
+  const [near, setNear] = useState(false);
+  const [about, setAbout] = useState(false);
+  const [tier, setTier] = useState<Tier>("mid");
   const [moment, setMoment] = useState(-1);
   const [proj, setProj] = useState(-1);
   const [still, setStill] = useState(false);
@@ -67,7 +74,8 @@ export function Journey() {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) setStill(true);
     try {
       const c = document.createElement("canvas");
-      if (!(c.getContext("webgl2") || c.getContext("webgl"))) setGl(false);
+      if (new URLSearchParams(window.location.search).get("webgl") === "off" || !(c.getContext("webgl2") || c.getContext("webgl"))) setGl(false);
+      else setTier(getTier());
     } catch {
       setGl(false);
     }
@@ -88,6 +96,8 @@ export function Journey() {
       }
     };
     let sceneOn = false;
+    let imgsOn = false;
+    let aboutOn = false;
     let mom = -1;
     let pj = -1;
 
@@ -151,7 +161,18 @@ export function Journey() {
         sceneOn = true;
         setScene(true);
       }
-      ctl.current.invalidate?.();
+      // The portrait is only requested once the intro starts to open.
+      if (!aboutOn && io > 0.02) {
+        aboutOn = true;
+        setAbout(true);
+      }
+      // Project screenshots are only requested once the visitor is getting close to them.
+      if (!imgsOn && t > 0.5) {
+        imgsOn = true;
+        setNear(true);
+      }
+      // The 3D scene only redraws when it is actually on screen and something changed.
+      if (t > 0.47 && t < 1.02) ctl.current.invalidate?.();
     };
     const onScroll = () => {
       if (!raf) raf = requestAnimationFrame(update);
@@ -187,7 +208,11 @@ export function Journey() {
         <div className="jr-bg" aria-hidden />
 
         <div className="jr-3d" aria-hidden>
-          {scene && !still && gl && <JourneyScene ctl={ctl.current} />}
+          {scene && !still && gl && (
+            <ErrorBoundary onError={() => setGl(false)}>
+              <JourneyScene ctl={ctl.current} tier={tier} />
+            </ErrorBoundary>
+          )}
         </div>
 
         <div className="jr-map" aria-hidden>
@@ -244,9 +269,7 @@ export function Journey() {
           </div>
         </div>
 
-        <div className="jr-photo">
-          <ProfilePhoto />
-        </div>
+        <div className="jr-photo">{(about || still) && <ProfilePhoto />}</div>
 
 
         {/* ───── Projects: one presentation system, three panels that turn ───── */}
@@ -286,8 +309,7 @@ export function Journey() {
               </div>
               {shot && (
                 <a className="jr-shot" href={`/work/${p.slug}`} tabIndex={-1} aria-hidden style={{ aspectRatio: `${shot.width} / ${shot.height}` }}>
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={shot.src} alt="" width={shot.width} height={shot.height} loading="lazy" decoding="async" />
+                  {(near || still) && <Image src={shot.src} alt="" width={shot.width} height={shot.height} sizes="(max-width: 760px) 55vw, 540px" quality={70} onError={(e) => (e.currentTarget.style.visibility = "hidden")} />}
                 </a>
               )}
             </div>

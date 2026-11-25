@@ -16,8 +16,11 @@ const serif = Instrument_Serif({
   style: ["normal", "italic"],
   variable: "--font-serif",
   display: "swap",
+  // Not preloaded: they would compete with the stylesheet on slow connections. Text paints at once in a
+  // metric-matched fallback and swaps when the font arrives, behind the intro curtain.
+  preload: false,
 });
-const sans = Manrope({ subsets: ["latin"], variable: "--font-sans", display: "swap" });
+const sans = Manrope({ subsets: ["latin"], variable: "--font-sans", display: "swap", preload: false });
 
 const description =
   "Mohamed Suhail is a Cyber Security student at VIT University, India. Software projects, hackathons and an initiative called NightBerrieZ.";
