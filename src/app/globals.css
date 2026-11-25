@@ -2965,12 +2965,12 @@ html::-webkit-scrollbar {
   }
 }
 
-/* The map starts drawing as the card scene ends (portal), and About carries on from the same point. */
+/* The map is drawn once, as the card scene ends (portal). About shows the finished map in the same place. */
 .hx-portal {
-  --bpl: calc(clamp(0, (var(--p, 0) - 0.8) * 5, 1) * 0.2);
+  --bpl: calc(clamp(0, (var(--p, 0) - 0.8) * 5, 1) * 0.3);
 }
 .beyond {
-  --bpl: calc(var(--bp, 0) + 0.2);
+  --bpl: 1;
 }
 .network {
   --bpl: 1;
