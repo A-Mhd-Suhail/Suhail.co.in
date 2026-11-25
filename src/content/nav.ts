@@ -1,11 +1,11 @@
-/** Site navigation. Each item is its own page; "Home" is the full landing page. */
+/** Site navigation. Every item scrolls to a section of the home page, except Contact which has its own page too. */
 export const navItems = [
   { id: "home", label: "Home", href: "/" },
-  { id: "about", label: "About", href: "/about" },
-  { id: "work", label: "Work", href: "/work" },
-  { id: "achievements", label: "Achievements", href: "/achievements" },
-  { id: "building", label: "NightBerrieZ", href: "/nightberriez" },
-  { id: "contact", label: "Contact", href: "/contact" },
+  { id: "beyond", label: "About", href: "/#beyond" },
+  { id: "things-i-build", label: "Work", href: "/#things-i-build" },
+  { id: "achievements", label: "Achievements", href: "/#achievements" },
+  { id: "building", label: "NightBerrieZ", href: "/#building" },
+  { id: "contact", label: "Contact", href: "/#contact" },
 ] as const;
 
 export type SectionId = (typeof navItems)[number]["id"];

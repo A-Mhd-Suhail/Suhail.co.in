@@ -23,9 +23,9 @@ export function CopyEmail({ email }: { email: string }) {
 
   return (
     <>
-      <button type="button" className={`copy-btn ${state === "copied" ? "is-copied" : ""}`} onClick={copy}>
-        {state === "copied" ? <Check aria-hidden size={16} /> : <Copy aria-hidden size={16} />}
-        <span>{state === "copied" ? "Copied" : state === "failed" ? "Copy failed, select the address" : "Copy email"}</span>
+      <button type="button" aria-label="Copy email address" className={`copy-btn ${state === "copied" ? "is-copied" : ""}`} onClick={copy}>
+        {state === "copied" ? <Check aria-hidden size={13} /> : <Copy aria-hidden size={13} />}
+        <span>{state === "copied" ? "Copied" : state === "failed" ? "Select to copy" : "Copy"}</span>
       </button>
       <span className="sr-only" role="status" aria-live="polite">
         {state === "copied" ? "Email address copied to clipboard" : state === "failed" ? "Copy failed" : ""}

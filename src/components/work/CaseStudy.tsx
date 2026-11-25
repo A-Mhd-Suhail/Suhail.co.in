@@ -20,7 +20,7 @@ export function CaseStudy({ project: p, next }: { project: Project; next?: Proje
   return (
     <main className="cs-page" data-tone="dark">
       <div className="cs-wrap">
-        <a className="cs-back" href="/work">
+        <a className="cs-back" href="/#things-i-build">
           <span aria-hidden="true">←</span> All projects
         </a>
 
@@ -114,7 +114,7 @@ export function CaseStudy({ project: p, next }: { project: Project; next?: Proje
         )}
 
         <footer className="cs-footer">
-          <a className="cs-back" href="/work">
+          <a className="cs-back" href="/#things-i-build">
             <span aria-hidden="true">←</span> Back to all projects
           </a>
           {next && (

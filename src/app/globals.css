@@ -876,14 +876,21 @@ a.work-media:hover img {
 }
 
 /* Contact */
+.contact-mailrow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1rem;
+  margin: clamp(1.75rem, 4vw, 2.75rem) 0 clamp(1.5rem, 3vw, 2rem);
+}
 .contact-mail {
-  display: inline-block;
   font-family: var(--font-serif), serif;
-  font-size: clamp(1.7rem, 5.6vw, 4rem);
-  line-height: 1.1;
-  letter-spacing: -0.012em;
+  font-size: clamp(1.35rem, 3.4vw, 2.4rem);
+  line-height: 1.15;
+  letter-spacing: -0.01em;
   text-decoration: none;
   overflow-wrap: anywhere;
+  user-select: all;
 }
 .contact-mail:hover {
   color: var(--copper);
@@ -891,65 +898,91 @@ a.work-media:hover img {
 .copy-btn {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  min-height: 44px;
-  padding: 0 1rem;
+  gap: 0.4rem;
+  height: 30px;
+  padding: 0 0.8rem;
   border: 1px solid var(--rule);
   border-radius: 999px;
   background: transparent;
-  color: var(--ink);
+  color: var(--grey);
   font: inherit;
-  font-size: 0.9rem;
+  font-size: 0.74rem;
+  letter-spacing: 0.06em;
   cursor: pointer;
   transition: border-color 0.3s, color 0.3s;
 }
-.copy-btn:hover {
+.copy-btn:hover,
+.copy-btn:focus-visible {
   border-color: var(--ink);
+  color: var(--ink);
 }
 .copy-btn.is-copied {
   border-color: var(--copper);
   color: var(--copper);
 }
-.contact-grid {
-  display: grid;
-  border-top: 1px solid var(--rule);
-}
-@media (min-width: 700px) {
-  .contact-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-@media (min-width: 1000px) {
-  .contact-grid {
-    grid-template-columns: repeat(4, 1fr);
-  }
-}
-.contact-cell {
+.contact-icons {
   display: flex;
-  gap: 0.9rem;
-  align-items: flex-start;
-  padding: 1.5rem 1rem 1.5rem 0;
-  border-bottom: 1px solid var(--rule);
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin: 0 0 clamp(1.5rem, 3vw, 2rem);
+  padding: 0;
+  list-style: none;
+}
+.contact-icon {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border: 1px solid var(--rule);
+  border-radius: 50%;
+  color: var(--ink);
+  transition: background 0.3s var(--ease), color 0.3s var(--ease), border-color 0.3s var(--ease), transform 0.4s var(--ease);
+}
+.contact-icon svg {
+  width: 20px;
+  height: 20px;
+}
+.contact-icon:hover,
+.contact-icon:focus-visible {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--ivory);
+  transform: translateY(-3px);
+}
+.contact-tip {
+  position: absolute;
+  top: calc(100% + 0.55rem);
+  left: 50%;
+  translate: -50% 0;
+  padding: 0.25rem 0.55rem;
+  border-radius: 4px;
+  background: var(--ink);
+  color: var(--ivory);
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s;
+}
+.contact-icon:hover .contact-tip,
+.contact-icon:focus-visible .contact-tip {
+  opacity: 1;
+}
+.contact-phone {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  color: var(--ink);
+  font-size: 1.0625rem;
   text-decoration: none;
 }
-.contact-cell svg {
-  flex: none;
-  margin-top: 0.25rem;
+.contact-phone svg {
   color: var(--grey);
-  transition: color 0.3s, transform 0.4s var(--ease);
 }
-a.contact-cell:hover svg {
+.contact-phone:hover {
   color: var(--copper);
-  transform: translateY(-2px);
-}
-.contact-cell small {
-  display: block;
-  color: var(--grey);
-  font-size: 0.8125rem;
-}
-.contact-cell span span {
-  display: block;
-  font-size: 1.0625rem;
 }
 
 /* Not found */
@@ -1700,54 +1733,237 @@ html::-webkit-scrollbar {
   }
 }
 
-/* ═════════════ NightBerrieZ branding (this section only) ═════════════ */
-.nb-brand {
+/* ═════════════ NightBerrieZ: a small circle opens into the brand ═════════════ */
+.nbx {
+  --e: 0;
+  --c: 0;
+  --k: 0;
+  --s: 0.12;
   --nb-red: #b3202c;
+  --w: min(86vw, 920px);
   position: relative;
-  isolation: isolate;
-  background: #000 !important;
+  height: 260svh;
+  background: var(--ivory);
   color: #f3f3f3;
-  border-top: 2px solid var(--nb-red);
 }
-/* The logo, tiled across the whole section as a low-opacity pattern. */
-.nb-brand::before {
-  content: "";
+.nbx-sticky {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  overflow: hidden;
+  background: var(--ivory);
+}
+/* The dark layer is revealed through a circle; the ivory page stays visible around it. */
+.nbx-iris {
   position: absolute;
   inset: 0;
-  z-index: -1;
-  background: url("/startup/nightberriez-logo.webp") center / clamp(260px, 26vw, 420px) auto repeat;
-  opacity: 0.09;
-  pointer-events: none;
+  background: #000;
+  clip-path: circle(calc(var(--k) * 34px + var(--e) * 62vmax) at 50% 50%);
+  will-change: clip-path;
 }
-/* A soft red glow behind the headline. */
-.nb-brand::after {
-  content: "";
+.nbx-bg {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(46% 38% at 50% 40%, rgba(179, 32, 44, 0.2), transparent 70%),
+    radial-gradient(90% 80% at 50% 50%, #0b0405 0%, #000 70%);
+  opacity: var(--e);
+}
+.nbx-logo {
   position: absolute;
   left: 50%;
-  top: 14%;
-  width: min(90vw, 760px);
+  top: 50%;
+  width: var(--w);
+  transform: translate(-50%, -50%) translateY(calc(var(--c) * -17svh)) scale(calc(1 - var(--c) * 0.36));
+}
+.nbx-logo svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+  transform-origin: 50% 35.3%;
+  transform: translateY(calc((1 - var(--e)) * var(--w) * 0.0767)) scale(calc(var(--s) + (1 - var(--s)) * var(--e)));
+}
+.nb-word {
+  opacity: clamp(0, calc((var(--e) - 0.45) * 3), 1);
+}
+.nb-tag {
+  opacity: clamp(0, calc((var(--e) - 0.72) * 4), 1);
+}
+.nb-glow {
+  animation: nb-breathe 5.5s ease-in-out infinite;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.nb-sheen {
+  animation: nb-sheen 6.5s ease-in-out infinite;
+}
+@keyframes nb-breathe {
+  50% {
+    opacity: 0.62;
+  }
+}
+@keyframes nb-sheen {
+  0%,
+  35% {
+    transform: translateX(-420px);
+  }
+  75%,
+  100% {
+    transform: translateX(520px);
+  }
+}
+.nbx[data-live="false"] .nb-glow,
+.nbx[data-live="false"] .nb-sheen,
+.nbx[data-live="false"] .nbx-orbit {
+  animation-play-state: paused;
+}
+
+/* The shared motif: a thin ring with one travelling light, around the opening circle. */
+.nbx-orbit {
+  position: absolute;
+  z-index: 2;
+  left: 50%;
+  top: 50%;
+  width: calc(var(--k) * 68px + var(--e) * 124vmax + 28px);
   aspect-ratio: 1;
-  transform: translateX(-50%);
-  background: radial-gradient(closest-side, rgba(179, 32, 44, 0.28), transparent 70%);
-  z-index: -1;
+  translate: -50% -50%;
+  border-radius: 50%;
+  border: 1px solid rgba(179, 32, 44, 0.35);
+  opacity: calc(var(--k) * (1 - var(--e) * 1.4));
+  pointer-events: none;
+  animation: nbx-spin 9s linear infinite;
+}
+.nbx-orbit::after {
+  content: "";
+  position: absolute;
+  top: -3px;
+  left: 50%;
+  width: 6px;
+  height: 6px;
+  margin-left: -3px;
+  border-radius: 50%;
+  background: #e0323f;
+  box-shadow: 0 0 10px 2px rgba(224, 50, 63, 0.8);
+}
+@keyframes nbx-spin {
+  to {
+    rotate: 360deg;
+  }
+}
+
+.nbx-copy {
+  position: absolute;
+  left: 50%;
+  bottom: calc(var(--ov) + clamp(1.5rem, 6svh, 4rem));
+  width: min(92vw, 36rem);
+  text-align: center;
+  opacity: var(--c);
+  transform: translate3d(-50%, calc((1 - var(--c)) * 22px), 0);
+  visibility: hidden;
+}
+.nbx[data-copy="true"] .nbx-copy {
+  visibility: visible;
+}
+.nbx:not([data-ready="true"]) .nbx-copy a {
   pointer-events: none;
 }
-.nb-brand .label,
-.nb-brand .h3 a,
-.nb-brand .ways h4 {
-  color: var(--nb-red);
+.nbx-label {
+  margin: 0 0 0.9rem;
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  color: #d0303d;
 }
-.nb-brand .ways h4 {
-  color: #f3f3f3;
+.nbx-title {
+  margin: 0 0 1.1rem;
+  font-family: var(--font-serif), Georgia, serif;
+  font-weight: 400;
+  font-size: clamp(1.9rem, 4.2vw, 3rem);
+  line-height: 1.1;
+  color: #f6f2ec;
 }
-.nb-brand .lede,
-.nb-brand .prose {
-  color: #bdbdbd;
+.nbx-text {
+  margin: 0 auto 0.8rem;
+  max-width: 32rem;
+  font-size: clamp(0.9rem, 1.1vw, 1rem);
+  line-height: 1.7;
+  color: rgba(243, 239, 232, 0.78);
 }
-.nb-brand .btn-light {
+.nbx-text-dim {
+  color: rgba(243, 239, 232, 0.55);
+}
+.nbx-cta {
+  display: inline-block;
+  margin-top: 0.7rem;
+  padding: 0.8rem 1.5rem;
+  border: 1px solid rgba(208, 48, 61, 0.7);
+  border-radius: 999px;
+  font-size: 0.74rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #fff;
+  transition: background 0.35s var(--ease), border-color 0.35s var(--ease);
+}
+.nbx-cta:hover,
+.nbx-cta:focus-visible {
   background: var(--nb-red);
   border-color: var(--nb-red);
-  color: #fff;
+}
+@media (max-aspect-ratio: 19/20) {
+  .nbx {
+    --w: 94vw;
+  }
+  .nbx-logo {
+    transform: translate(-50%, -50%) translateY(calc(var(--c) * -24svh)) scale(calc(1 - var(--c) * 0.3));
+  }
+  .nbx-copy {
+    bottom: calc(var(--ov) + 1.4rem);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .nbx {
+    --e: 1;
+    --c: 1;
+    --k: 1;
+    height: auto;
+  }
+  .nbx-sticky {
+    position: relative;
+    height: auto;
+    min-height: 100svh;
+    display: grid;
+    align-content: center;
+    gap: 2rem;
+    padding: 6rem var(--header-pad-x) calc(var(--ov) + 3rem);
+  }
+  .nbx-iris {
+    position: relative;
+    inset: auto;
+    clip-path: none;
+    display: grid;
+    gap: 2rem;
+    padding: 4rem 1rem;
+  }
+  .nbx-logo,
+  .nbx-copy {
+    position: relative;
+    inset: auto;
+    left: auto;
+    top: auto;
+    bottom: auto;
+    transform: none;
+    margin: 0 auto;
+    visibility: visible;
+  }
+  .nbx-orbit {
+    display: none;
+  }
+  .nb-glow,
+  .nb-sheen {
+    animation: none;
+  }
 }
 
 /* ═════════════ Hero: scroll-driven android and eye camera ═════════════ */
@@ -2001,7 +2217,7 @@ html::-webkit-scrollbar {
 }
 .beyond {
   position: relative;
-  height: 360svh;
+  height: 300svh;
   background: #070708;
   color: var(--pearl);
 }
@@ -2504,12 +2720,54 @@ html::-webkit-scrollbar {
 
 /* ═════════════ Things I build: three project destinations on the map ═════════════ */
 .network {
-  height: 380svh;
+  height: 310svh;
+  /* Slides over the end of the About scene, fading in at its top edge, so the seam never shows an empty stage. */
+  margin-top: -45svh;
+  z-index: 1;
+  background: transparent;
+  -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 18svh);
+  mask-image: linear-gradient(180deg, transparent 0, #000 18svh);
   --panx: calc(13vw - var(--bp, 0) * 3vw);
   --panx-m: calc(-2vw - var(--bp, 0) * 2vw);
 }
 .network .bm-pulse {
   stroke: #a8ecf5;
+}
+/* The map arrives already drawn (it continues the About scene), so entering this section never shows an empty stage. */
+.network .bm-land {
+  stroke-dashoffset: 0;
+  fill-opacity: 0.075;
+}
+.network .bm-grat {
+  stroke-opacity: 0.15;
+}
+.network .beyond-title {
+  opacity: 1;
+}
+/* Shared motif: a small ring with one travelling light. */
+.nw-orbit {
+  position: absolute;
+  z-index: 3;
+  left: var(--header-pad-x);
+  bottom: calc(var(--ov) + 1.6rem);
+  width: 2.6rem;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: 1px solid rgba(201, 174, 131, 0.4);
+  animation: nbx-spin 8s linear infinite;
+  pointer-events: none;
+}
+.nw-orbit::after {
+  content: "";
+  position: absolute;
+  top: -3px;
+  left: 50%;
+  width: 6px;
+  height: 6px;
+  margin-left: -3px;
+  border-radius: 50%;
+  background: var(--gold-hi);
+  box-shadow: 0 0 10px 2px rgba(244, 230, 200, 0.7);
 }
 .network .rv a {
   pointer-events: auto;
@@ -2591,10 +2849,11 @@ html::-webkit-scrollbar {
   position: absolute;
   z-index: 3;
   right: var(--header-pad-x);
-  bottom: calc(var(--ov) + 3.2rem);
-  width: clamp(260px, 27vw, 430px);
+  top: calc(50% - var(--ov) / 2);
+  width: clamp(320px, 43vw, 800px);
   aspect-ratio: 16 / 10;
-  perspective: 1200px;
+  translate: 0 -52%;
+  perspective: 1400px;
   pointer-events: none;
 }
 .nw-shot {
@@ -2670,11 +2929,17 @@ html::-webkit-scrollbar {
   .network {
     --bm-w: 190vw;
   }
+  .nw-orbit {
+    display: none;
+  }
   .nw-previews {
     right: var(--header-pad-x);
-    top: clamp(7rem, 24vw, 9rem);
-    bottom: auto;
-    width: min(44vw, 200px);
+    left: var(--header-pad-x);
+    top: clamp(6.5rem, 22vw, 8.5rem);
+    width: auto;
+    translate: none;
+    max-height: 30svh;
+    aspect-ratio: 16 / 9.4;
   }
   .nw-name {
     font-size: clamp(2.2rem, 11vw, 3.2rem);
@@ -2703,7 +2968,13 @@ html::-webkit-scrollbar {
   .pm-stop {
     pointer-events: auto;
   }
-  .pm-ring {
+  .pm-ring,
+  .nw-orbit {
     animation: none;
+  }
+  .network {
+    margin-top: 0;
+    -webkit-mask-image: none;
+    mask-image: none;
   }
 }

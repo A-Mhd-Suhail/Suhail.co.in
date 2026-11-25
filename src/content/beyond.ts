@@ -25,7 +25,7 @@ export const beyond = {
     label: "Currently focused on",
     lead: "Developing",
     name: "NightBerrieZ.",
-    href: "/nightberriez",
+    href: "/#building",
     cta: "About NightBerrieZ",
   },
 

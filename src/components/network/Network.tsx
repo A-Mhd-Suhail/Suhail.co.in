@@ -11,10 +11,10 @@ const statusLabel = { completed: "Completed", "in-progress": "In progress", prot
 
 /** Progress at which each destination takes over: [in, out]. The intro is the first window. */
 const WINDOWS = [
-  { a: 0.04, b: 0.24 },
-  { a: 0.28, b: 0.5 },
-  { a: 0.54, b: 0.76 },
-  { a: 0.8, b: 9 },
+  { a: -0.06, b: 0.2 },
+  { a: 0.25, b: 0.5 },
+  { a: 0.55, b: 0.78 },
+  { a: 0.83, b: 9 },
 ];
 
 /**
@@ -135,6 +135,7 @@ export function Network() {
           })}
         </div>
 
+        <span className="nw-orbit" aria-hidden />
         <div className="beyond-pager" aria-hidden>
           <i />
           <i />
