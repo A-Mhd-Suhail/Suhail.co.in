@@ -1764,9 +1764,7 @@ html::-webkit-scrollbar {
 .nbx-bg {
   position: absolute;
   inset: 0;
-  background:
-    radial-gradient(46% 38% at 50% 40%, rgba(179, 32, 44, 0.2), transparent 70%),
-    radial-gradient(90% 80% at 50% 50%, #0b0405 0%, #000 70%);
+  background: #000;
   opacity: var(--e);
 }
 .nbx-logo {
@@ -1790,18 +1788,8 @@ html::-webkit-scrollbar {
 .nb-tag {
   opacity: clamp(0, calc((var(--e) - 0.72) * 4), 1);
 }
-.nb-glow {
-  animation: nb-breathe 5.5s ease-in-out infinite;
-  transform-box: fill-box;
-  transform-origin: center;
-}
 .nb-sheen {
   animation: nb-sheen 6.5s ease-in-out infinite;
-}
-@keyframes nb-breathe {
-  50% {
-    opacity: 0.62;
-  }
 }
 @keyframes nb-sheen {
   0%,
@@ -1813,7 +1801,6 @@ html::-webkit-scrollbar {
     transform: translateX(520px);
   }
 }
-.nbx[data-live="false"] .nb-glow,
 .nbx[data-live="false"] .nb-sheen,
 .nbx[data-live="false"] .nbx-orbit {
   animation-play-state: paused;
@@ -1960,7 +1947,6 @@ html::-webkit-scrollbar {
   .nbx-orbit {
     display: none;
   }
-  .nb-glow,
   .nb-sheen {
     animation: none;
   }
@@ -2110,7 +2096,7 @@ html::-webkit-scrollbar {
   transform: none;
 }
 .hx-portal {
-  --pp: clamp(0, calc((var(--p, 0) - 0.8) * 5), 1);
+  --pp: clamp(0, calc((var(--p, 0) - 0.74) * 5), 1);
   position: absolute;
   inset: 0;
   z-index: 4;
@@ -2264,7 +2250,7 @@ html::-webkit-scrollbar {
   stroke-width: var(--sw);
   stroke-linejoin: round;
   stroke-dasharray: 1;
-  stroke-dashoffset: calc(1 - clamp(0, (var(--bp, 0) - 0.01 - var(--d, 0)) * 3.2, 1));
+  stroke-dashoffset: calc(1 - clamp(0, (var(--bp, 0) - var(--d, 0)) * 5, 1));
   fill: #b9bfca;
   fill-opacity: clamp(0, calc((var(--bp, 0) - 0.28) * 0.45), 0.075);
 }
@@ -2976,5 +2962,75 @@ html::-webkit-scrollbar {
     margin-top: 0;
     -webkit-mask-image: none;
     mask-image: none;
+  }
+}
+
+/* ═════════════ Short bridge between the hero and About: a signal pulse over the map ═════════════ */
+.sig-rings {
+  position: absolute;
+  z-index: 2;
+  left: 62%;
+  top: 46%;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+  opacity: clamp(0, calc(var(--pp, 1) * 1.4 - 0.2), 1);
+}
+.sig-rings-beyond {
+  --pp: 1;
+  opacity: clamp(0, calc(1 - var(--bp, 0) * 9), 1);
+}
+.sig-rings i {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: min(46vmin, 420px);
+  aspect-ratio: 1;
+  margin: calc(min(46vmin, 420px) / -2) 0 0 calc(min(46vmin, 420px) / -2);
+  border: 1.5px solid rgba(214, 186, 138, 0.85);
+  box-shadow: 0 0 22px rgba(201, 174, 131, 0.22), inset 0 0 22px rgba(201, 174, 131, 0.1);
+  border-radius: 50%;
+  opacity: 0;
+  transform: scale(0.1);
+  animation: sig-ring 3.2s cubic-bezier(0.2, 0.6, 0.3, 1) infinite;
+}
+.sig-rings i:nth-child(2) {
+  animation-delay: 1.05s;
+}
+.sig-rings i:nth-child(3) {
+  animation-delay: 2.1s;
+}
+.sig-rings::after {
+  content: "";
+  position: absolute;
+  left: -4px;
+  top: -4px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--gold-hi, #f4e6c8);
+  box-shadow: 0 0 14px 3px rgba(244, 230, 200, 0.7);
+}
+@keyframes sig-ring {
+  0% {
+    opacity: 0.9;
+    transform: scale(0.1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.7);
+  }
+}
+@media (max-aspect-ratio: 19/20) {
+  .sig-rings {
+    left: 50%;
+    top: 40%;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sig-rings i {
+    animation: none;
+    opacity: 0.25;
+    transform: scale(0.6);
   }
 }

@@ -26,11 +26,6 @@ export function NightBerriezLogo({ className, title = "NightBerrieZ, innovation 
           <stop offset="0.5" stopColor="#ff9aa2" stopOpacity="0.38" />
           <stop offset="1" stopColor="#fff" stopOpacity="0" />
         </linearGradient>
-        <radialGradient id="nb-glow" cx="0.5" cy="0.5" r="0.5">
-          <stop offset="0" stopColor="#c0222f" stopOpacity="0.5" />
-          <stop offset="0.55" stopColor="#7a0a14" stopOpacity="0.18" />
-          <stop offset="1" stopColor="#000" stopOpacity="0" />
-        </radialGradient>
         <linearGradient id="nb-rule-l" x1="0" y1="0" x2="1" y2="0">
           <stop offset="0" stopColor="#fff" stopOpacity="0" />
           <stop offset="1" stopColor="#fff" stopOpacity="0.9" />
@@ -42,7 +37,6 @@ export function NightBerriezLogo({ className, title = "NightBerrieZ, innovation 
       </defs>
 
       <g className="nb-mark">
-        <ellipse className="nb-glow" cx="520" cy="449" rx="330" ry="215" fill="url(#nb-glow)" />
         <path d={NB_N} fill="url(#nb-face)" />
         <path d={NB_B} fill="url(#nb-face)" />
         <g clipPath="url(#nb-clip)">

@@ -8,7 +8,7 @@ import { ProfilePhoto } from "./ProfilePhoto";
 const WorldMap = dynamic(() => import("./WorldMap"));
 
 /** Scroll stages (section progress) at which each reveal is the active one. */
-const STAGES = [0.12, 0.36, 0.6, 0.8];
+const STAGES = [0.05, 0.36, 0.6, 0.8];
 
 /**
  * "Beyond the profile": a pinned stage whose scroll progress (--bp, 0 to 1) draws the world map, lights the
@@ -57,13 +57,18 @@ export function Beyond() {
           <WorldMap />
         </div>
         <div className="beyond-scrim" aria-hidden />
+        <div className="sig-rings sig-rings-beyond" aria-hidden>
+          <i />
+          <i />
+          <i />
+        </div>
 
         <h2 id="beyond-title" className="beyond-title">
           {beyond.title}
         </h2>
 
         <div className="beyond-copy">
-          <div className="rv" style={{ "--a": 0.12, "--b": 0.34 } as React.CSSProperties}>
+          <div className="rv" style={{ "--a": 0.05, "--b": 0.33 } as React.CSSProperties}>
             <p className="bp-label">{identity.label}</p>
             <h3 className="bp-name">{identity.name}</h3>
             {identity.lines.map((l) => (
