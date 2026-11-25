@@ -23,10 +23,10 @@ export function Contact() {
       <div className="wrap contact">
         <p className="label" style={{ marginBottom: "1rem" }}>Contact</p>
         <div id="contact-title" className="contact-title">
-          <Headline as="h2" className="h1" lines={["Always feel free to", "connect with me."]} />
+          <Headline as="h2" className="h1" lines={["Always feel free to connect with me."]} />
         </div>
         <p className="lede contact-lede">
-          Whether you have an idea, want to discuss technology, explore a collaboration, or simply connect, you&apos;re always welcome to reach out.
+          A business proposal, a collaboration, or a conversation about technology, business and entrepreneurship: whatever the domain, I&apos;d be glad to hear from you.
         </p>
 
         <div className="contact-mailrow">

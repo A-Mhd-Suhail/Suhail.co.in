@@ -810,3 +810,12 @@
 .jr[data-still="true"] .jr-proj::before {
   display: none;
 }
+
+/* No underline under the focus name. */
+.jr .bp-focus::after {
+  display: none;
+}
+.jr .bp-link {
+  border-bottom: 0;
+  padding-bottom: 0;
+}

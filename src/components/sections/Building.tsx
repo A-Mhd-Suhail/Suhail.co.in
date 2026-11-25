@@ -37,7 +37,7 @@ export function Building() {
       el.style.setProperty("--e", e.toFixed(4));
       el.style.setProperty("--c", c.toFixed(4));
       el.style.setProperty("--k", clamp(np / 0.05).toFixed(3));
-      const copy = String(c > 0.02);
+      const copy = String(c > 0.7);
       if (el.dataset.copy !== copy) el.dataset.copy = copy;
       const ready = String(c > 0.9);
       if (el.dataset.ready !== ready) el.dataset.ready = ready;
