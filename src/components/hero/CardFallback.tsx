@@ -8,7 +8,6 @@ export function CardFallback() {
       <div className="card-fallback-face">
         <div className="cf-row">
           <span>{c.label}</span>
-          <span>{c.index}</span>
         </div>
         <p className="cf-name">{c.name}</p>
         <p className="cf-role">{c.role}</p>

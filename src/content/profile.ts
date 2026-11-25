@@ -28,7 +28,6 @@ export const profile = {
   /** Text engraved on the hero visiting card. Edit here; nothing else is hard-coded. */
   card: {
     label: "Personal identity",
-    index: "01 / 01",
     name: "SUHAIL.",
     role: "Cyber Security Enthusiast",
     school: "VIT University",

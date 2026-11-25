@@ -13,7 +13,7 @@ export const network = {
       blurb: "An interactive lunar mission-support experience exploring illumination, landing-site conditions and communication opportunities at the Moon's South Pole.",
     },
     {
-      slug: "open-learning",
+      slug: "naji-learning",
       node: "in",
       blurb: "An education platform exploring structured learning resources, competitive exam preparation and connected student learning experiences.",
     },

@@ -122,7 +122,6 @@ function drawLettering(canvas: HTMLCanvasElement) {
   };
 
   spaced(c.label.toUpperCase(), padX, ch * 0.13, ch * 0.034, ch * 0.007, dim);
-  spaced(c.index, cw - padX, ch * 0.13, ch * 0.034, ch * 0.007, dim, "right");
 
   g.font = `400 ${ch * 0.23}px ${serif}`;
   g.fillStyle = silver;

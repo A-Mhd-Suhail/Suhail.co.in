@@ -76,8 +76,8 @@ export const projects: Project[] = [
     visibility: "public",
   },
   {
-    slug: "open-learning",
-    name: "Open Learning",
+    slug: "naji-learning",
+    name: "Naji Learning",
     headline: "Learning should connect people, not just content.",
     summary: "An education platform for school learning and competitive exam preparation, built around connected student learning.",
     category: "Education",
@@ -98,9 +98,9 @@ export const projects: Project[] = [
     tech: ["Next.js 16", "React 19", "TypeScript", "Tailwind CSS 4", "Supabase (auth, Postgres, storage)", "LiveKit", "Zod", "ExcelJS", "Vitest", "Playwright"],
     links: { demo: "https://opennlearning.vercel.app/", repo: "https://github.com/A-Mhd-Suhail/Open-Learning" },
     screenshots: [
-      { src: "/projects/open-learning/home.webp", alt: "Open Learning home page with the student ID card", width: 2000, height: 1151, caption: "Student ID and learning tracks" },
+      { src: "/projects/naji-learning/home.webp", alt: "Naji Learning home page: Learn Together. Solve Together. Grow Together.", width: 2000, height: 1111, caption: "Landing page" },
     ],
-    todo: ["Your exact contribution to Open Learning", "The 2,584 count is from the project's own spreadsheet, not from the live database. Recheck before quoting it elsewhere", "More screenshots for the gallery"],
+    todo: ["Your exact contribution to Naji Learning", "The 2,584 count is from the project's own spreadsheet, not from the live database. Recheck before quoting it elsewhere", "More screenshots for the gallery"],
     visibility: "public",
   },
   {
