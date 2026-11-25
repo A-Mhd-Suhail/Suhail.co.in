@@ -57,11 +57,6 @@ export function Beyond() {
           <WorldMap />
         </div>
         <div className="beyond-scrim" aria-hidden />
-        <div className="sig-rings sig-rings-beyond" aria-hidden>
-          <i />
-          <i />
-          <i />
-        </div>
 
         <h2 id="beyond-title" className="beyond-title">
           {beyond.title}

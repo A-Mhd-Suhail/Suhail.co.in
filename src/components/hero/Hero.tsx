@@ -101,11 +101,6 @@ export function Hero() {
             </div>
           )}
           <div className="beyond-scrim" />
-          <div className="sig-rings" aria-hidden>
-            <i />
-            <i />
-            <i />
-          </div>
         </div>
       </div>
     </section>
