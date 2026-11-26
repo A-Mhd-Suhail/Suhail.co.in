@@ -1464,7 +1464,7 @@ html::-webkit-scrollbar {
   --w: min(86vw, 920px);
   position: relative;
   height: 260svh;
-  background: var(--ivory);
+  background: #fff;
   color: #f3f3f3;
 }
 
@@ -1473,10 +1473,10 @@ html::-webkit-scrollbar {
   top: 0;
   height: 100svh;
   overflow: hidden;
-  background: var(--ivory);
+  background: #fff;
 }
 
-/* The dark layer is revealed through a circle; the ivory page stays visible around it. */
+/* The dark layer is revealed through a circle; the white page stays visible around it. */
 .nbx-iris {
   position: absolute;
   inset: 0;

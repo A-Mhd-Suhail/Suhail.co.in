@@ -29,7 +29,7 @@ export function ScrollReveal() {
     };
     // Every block of every section below the hero animates in too, including ones not marked by hand.
     const mark = () => {
-      document.querySelectorAll<HTMLElement>("main > section:not(#home), footer").forEach((sec) => {
+      document.querySelectorAll<HTMLElement>("main > section:not(#home):not([data-own-reveal]), footer").forEach((sec) => {
         const body = sec.querySelector<HTMLElement>(":scope > .wrap") ?? sec;
         Array.from(body.children).forEach((child, i) => {
           const el = child as HTMLElement;

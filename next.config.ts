@@ -30,7 +30,7 @@ const nextConfig: NextConfig = {
     return [
       { source: "/about", destination: "/#beyond", permanent: true },
       { source: "/work", destination: "/#things-i-build", permanent: true },
-      { source: "/achievements", destination: "/#achievements", permanent: true },
+      { source: "/achievements", destination: "/", permanent: false },
       { source: "/work/open-learning", destination: "/work/naji-learning", permanent: true },
       { source: "/nightberriez", destination: "/#building", permanent: true },
     ];

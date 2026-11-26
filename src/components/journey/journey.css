@@ -1,4 +1,4 @@
-/* The journey: map, About, Earth, Moon and the three project panels. Ported map and typography rules first. */
+/* The journey: the world map and About. Map and typography rules first. */
 .bm-grat {
   fill: none;
   stroke: #9a8f7c;
@@ -136,30 +136,16 @@
   -webkit-text-fill-color: transparent;
 }
 
-.bp-focus::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: -0.1em;
-  height: 1px;
-  background: var(--gold);
-  transform-origin: left;
-  transform: scaleX(clamp(0, calc(var(--inr) - 1), 1));
-}
-
 .bp-link {
   display: inline-block;
   font-size: 0.78rem;
   letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--pearl);
-  border-bottom: 1px solid rgba(243, 239, 230, 0.3);
-  padding-bottom: 0.3rem;
+  text-decoration: none;
 }
 
 .bp-link:hover {
-  border-color: var(--gold);
   color: var(--gold-hi);
 }
 
@@ -250,93 +236,10 @@
   border-right-width: 1px;
 }
 
-.nw-no {
-  display: inline-block;
-  margin-right: 0.6rem;
-  padding-right: 0.7rem;
-  border-right: 1px solid rgba(201, 174, 131, 0.5);
-  letter-spacing: 0.2em;
-}
-
-.nw-name {
-  font-size: clamp(2.6rem, 5.4vw, 5rem);
-  margin-bottom: 0.9rem;
-}
-
-.nw-headline {
-  margin: 0 0 1.1rem;
-  font-size: clamp(0.78rem, 1vw, 0.92rem);
-  font-weight: 500;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--gold-hi);
-}
-
-.nw-status {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  margin: 1.1rem 0 1.4rem;
-  font-size: 0.7rem;
-  letter-spacing: 0.24em;
-  text-transform: uppercase;
-  color: rgba(243, 239, 230, 0.55);
-}
-
-.nw-status i {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: #9fe8f2;
-  box-shadow: 0 0 0 3px rgba(159, 232, 242, 0.14);
-}
-
-.nw-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.7rem;
-}
-
-.nw-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.8rem 1.3rem;
-  border: 1px solid rgba(243, 239, 230, 0.28);
-  border-radius: 999px;
-  font-size: 0.74rem;
-  font-weight: 500;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--pearl);
-  transition: background 0.45s var(--ease), border-color 0.45s var(--ease), color 0.45s var(--ease), transform 0.45s var(--ease);
-}
-
-.nw-btn:hover,
-.nw-btn:focus-visible {
-  border-color: var(--gold);
-  color: var(--gold-hi);
-  transform: translateY(-2px);
-}
-
-.nw-btn-main {
-  background: var(--gold);
-  border-color: var(--gold);
-  color: #17130c;
-}
-
-.nw-btn-main:hover,
-.nw-btn-main:focus-visible {
-  background: var(--gold-hi);
-  border-color: var(--gold-hi);
-  color: #17130c;
-}
-
-/* ═════════════ The journey: one pinned stage, one map, one 3D scene ═════════════
+/* ═════════════ The journey: one pinned stage, one map ═════════════
    Journey.tsx turns the scroll position into custom properties on .jr:
-   --io iris, --mp map drawing, --jt journey time, --bp about progress, --c1 map pull-back,
-   --m0..3 about moments, --ry0..2 panel rotations (deg), --moon, --deco1/2. Nothing here is time based
-   except small ambient loops that pause off screen. */
+   --io iris, --mp map drawing, --jt journey time, --bp about progress, --m0..3 about moments.
+   Nothing here is time based except small ambient loops that pause off screen. */
 .jr {
   --gold: #c9ae83;
   --gold-hi: #f4e6c8;
@@ -347,10 +250,9 @@
   --mp: 0;
   --jt: 0;
   --bp: 0;
-  --c1: 0;
   position: relative;
   z-index: 1;
-  height: 1250svh;
+  height: 800svh;
   margin-top: -200svh;
   color: var(--pearl);
   pointer-events: none;
@@ -393,12 +295,6 @@
     radial-gradient(80% 90% at 70% 45%, #15130f 0%, #0a0a0b 55%, #060607 100%);
 }
 
-.jr-3d {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-}
-
 .jr-map {
   position: absolute;
   inset: 0;
@@ -406,17 +302,8 @@
   perspective: 1500px;
   -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 9%, #000 91%, transparent 100%);
   mask-image: linear-gradient(90deg, transparent 0, #000 9%, #000 91%, transparent 100%);
-  /* Pull-back: the same map shrinks into a disc, which then becomes the 3D Earth. */
-  clip-path: circle(calc((1 - var(--c1)) * 160vmax + var(--c1) * 30svh) at 50% 50%);
-  opacity: calc(1 - clamp(0, (var(--c1) - 0.72) * 3.6, 1));
 }
 
-.jr[data-map="off"] .jr-map {
-  visibility: hidden;
-}
-
-.jr[data-map="off"] .bm-pulse,
-.jr[data-map="off"] .bm-home .bm-halo,
 .jr[data-live="false"] .bm-pulse,
 .jr[data-live="false"] .bm-home .bm-halo {
   animation-play-state: paused;
@@ -430,7 +317,7 @@
   max-width: none;
   height: auto;
   transform-origin: 50% 60%;
-  transform: translate(-50%, -50%) translateX(calc((-9vw - var(--bp, 0) * 5vw) * (1 - var(--c1, 0)))) rotateX(calc(24deg * (1 - var(--c1, 0)))) scale(calc((1 + var(--bp, 0) * 0.07) * (1 - var(--c1, 0) * 0.7)));
+  transform: translate(-50%, -50%) translateX(calc(-9vw - var(--bp, 0) * 5vw)) rotateX(24deg) scale(calc(1 + var(--bp, 0) * 0.07));
   overflow: visible;
 }
 
@@ -444,7 +331,6 @@
   inset: 0;
   z-index: 2;
   pointer-events: none;
-  opacity: calc(1 - var(--c1));
   background:
     linear-gradient(90deg, rgba(7, 7, 8, 0.92) 0%, rgba(7, 7, 8, 0.55) 34%, rgba(7, 7, 8, 0) 60%),
     radial-gradient(75% 75% at 62% 48%, transparent 40%, rgba(5, 5, 6, 0.8) 100%);
@@ -474,12 +360,8 @@
   background: var(--gold);
 }
 
-.jr-label-about {
-  opacity: calc(clamp(0, var(--jt) * 40, 1) * (1 - clamp(0, (var(--jt) - 0.49) * 40, 1)));
-}
-
-.jr-label-work {
-  opacity: clamp(0, (var(--jt) - 0.68) * 30, 1);
+.jr-label {
+  opacity: clamp(0, var(--jt) * 20, 1);
 }
 
 /* About moments: one column on the left, replaced in place as you scroll. */
@@ -499,20 +381,20 @@
   transform: translate3d(0, calc((1 - var(--v, 0)) * 26px), 0);
 }
 
-.jr-m0 { --v: var(--m0, 0); }
+.jr-m0 { --v: var(--m0, 0);
+}
 
-.jr-m1 { --v: var(--m1, 0); }
+.jr-m1 { --v: var(--m1, 0);
+}
 
-.jr-m2 { --v: var(--m2, 0); }
+.jr-m2 { --v: var(--m2, 0);
+}
 
-.jr-m3 { --v: var(--m3, 0); }
+.jr-m3 { --v: var(--m3, 0);
+}
 
 .jr-gap {
   margin-top: 0.9rem;
-}
-
-.jr .bp-focus::after {
-  transform: scaleX(var(--m3, 0));
 }
 
 .jr .bp-link {
@@ -585,80 +467,11 @@
   right: var(--header-pad-x);
   top: calc(50% - var(--ov) / 2);
   width: clamp(190px, 19vw, 290px);
-  --pv: calc(clamp(0, (var(--jt) - 0.03) * 40, 1) * (1 - clamp(0, (var(--jt) - 0.49) * 40, 1)));
+  --pv: clamp(0, (var(--jt) - 0.02) * 20, 1);
   opacity: var(--pv);
   transform: translateY(calc(-50% + (1 - var(--pv)) * 30px)) perspective(1100px) rotateY(-11deg) rotateX(3deg);
 }
 
-/* ───── Project presentation system: text on the left, a turning product panel lower right ───── */
-.jr-proj {
-  position: absolute;
-  inset: 0;
-  z-index: 4;
-  perspective: 1800px;
-  pointer-events: none;
-  visibility: hidden;
-}
-
-.jr-proj[data-on="true"],
-.jr-proj:has(.jr-pt[style]) {
-  visibility: visible;
-}
-
-.jr-pt {
-  position: absolute;
-  left: var(--header-pad-x);
-  top: calc(50% - var(--ov) / 2);
-  width: min(44%, 36rem);
-  transform-origin: 0 50%;
-  transform: translateY(-50%) rotateY(calc(var(--ry, 90) * 1deg * 0.6));
-  opacity: calc(1 - clamp(0, (abs(var(--ry, 90)) - 40) / 50, 1));
-  backface-visibility: hidden;
-}
-
-.jr-shot {
-  position: absolute;
-  right: var(--header-pad-x);
-  bottom: calc(var(--ov) + clamp(1.6rem, 6svh, 3.6rem));
-  width: clamp(250px, 31vw, 540px);
-  max-height: 46svh;
-  transform-origin: 50% 50%;
-  transform: rotateY(calc(var(--ry, 90) * 1deg)) rotateX(2deg);
-  backface-visibility: hidden;
-  overflow: hidden;
-  border-radius: 8px;
-  border: 1px solid rgba(201, 174, 131, 0.45);
-  background: #0c0c0e;
-  box-shadow: 0 36px 70px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.1);
-  opacity: calc(1 - clamp(0, (abs(var(--ry, 90)) - 70) / 20, 1));
-}
-
-.jr-shot img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: 50% 0;
-}
-
-.jr-shot::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(118deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0) 40%);
-  pointer-events: none;
-}
-
-.jr-proj[data-on="true"] .jr-shot,
-.jr-proj[data-on="true"] .jr-pt a {
-  pointer-events: auto;
-}
-
-.jr-proj .nw-btn {
-  pointer-events: auto;
-}
-
-/* ───── Portrait and phone ───── */
 @media (max-aspect-ratio: 19/20) {
 
   .jr {
@@ -669,11 +482,7 @@
 
   .bm {
     top: 36%;
-    transform: translate(-50%, -50%) translateX(calc((-59vw - var(--bp, 0) * 5vw) * (1 - var(--c1, 0)))) rotateX(calc(18deg * (1 - var(--c1, 0)))) scale(calc((1 + var(--bp, 0) * 0.06) * (1 - var(--c1, 0) * 0.5)));
-  }
-
-  .jr-map {
-    clip-path: circle(calc((1 - var(--c1)) * 160vmax + var(--c1) * 20svh) at 50% 38%);
+    transform: translate(-50%, -50%) translateX(calc(-59vw - var(--bp, 0) * 5vw)) rotateX(18deg) scale(calc(1 + var(--bp, 0) * 0.06));
   }
 
   .jr-scrim {
@@ -714,53 +523,22 @@
     transform: translateY(calc((1 - var(--pv)) * 24px)) perspective(900px) rotateY(-12deg);
   }
 
-  .jr-pt {
-    top: auto;
-    bottom: calc(var(--ov) + 1.4rem);
-    right: var(--header-pad-x);
-    width: auto;
-    transform: rotateY(calc(var(--ry, 90) * 1deg * 0.6));
-  }
-
-  .jr-shot {
-    left: auto;
-    right: var(--header-pad-x);
-    top: clamp(6.5rem, 22vw, 8.5rem);
-    bottom: auto;
-    width: min(52vw, 260px);
-    max-height: 22svh;
-  }
-
-  .nw-name {
-    font-size: clamp(2.2rem, 11vw, 3.2rem);
-  }
-
-  .nw-btn {
-    padding: 0.7rem 1rem;
-    font-size: 0.68rem;
-  }
-
   .jr .bm-pulse,
   .jr .bm-home .bm-halo {
     animation: none;
   }
-
 }
 
 /* ───── Reduced motion: no pinning, no 3D. The finished map, then About, then each project, stacked. ───── */
 .jr[data-still="true"] {
   --io: 1;
   --mp: 1;
-  --jt: 0.3;
+  --jt: 1;
   --bp: 1;
-  --c1: 0;
-  --m0: 1;
+    --m0: 1;
   --m1: 1;
   --m2: 1;
   --m3: 1;
-  --ry0: 0;
-  --ry1: 0;
-  --ry2: 0;
   height: auto;
   margin-top: 0;
 }
@@ -777,9 +555,7 @@
 }
 
 .jr[data-still="true"] .jr-bg,
-.jr[data-still="true"] .jr-3d,
-.jr[data-still="true"] .jr-scrim,
-.jr[data-still="true"] .jr-label-work {
+.jr[data-still="true"] .jr-scrim {
   display: none;
 }
 
@@ -793,10 +569,7 @@
 
 .jr[data-still="true"] .jr-label,
 .jr[data-still="true"] .jr-copy,
-.jr[data-still="true"] .jr-photo,
-.jr[data-still="true"] .jr-proj,
-.jr[data-still="true"] .jr-pt,
-.jr[data-still="true"] .jr-shot {
+.jr[data-still="true"] .jr-photo {
   position: relative;
   inset: auto;
   top: auto;
@@ -825,75 +598,7 @@
   width: min(60vw, 260px);
 }
 
-.jr[data-still="true"] .jr-proj {
-  display: grid;
-  gap: 1.5rem;
-}
-
-.jr[data-still="true"] .jr-shot {
-  width: min(100%, 520px);
-}
-
 .jr[data-still="true"] a,
 .jr[data-still="true"] li[tabindex] {
   pointer-events: auto;
-}
-
-/* Keep project text readable over the Moon and stars. */
-.jr-proj::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background: linear-gradient(90deg, rgba(5, 5, 6, 0.72) 0%, rgba(5, 5, 6, 0.35) 34%, rgba(5, 5, 6, 0) 58%);
-  opacity: calc(1 - clamp(0, (abs(var(--ry, 90)) - 40) / 50, 1));
-}
-
-@media (max-aspect-ratio: 19/20) {
-
-  .jr-proj::before {
-    background: linear-gradient(0deg, rgba(5, 5, 6, 0.92) 0%, rgba(5, 5, 6, 0.7) 38%, rgba(5, 5, 6, 0) 66%);
-  }
-
-}
-
-.jr[data-still="true"] .jr-proj::before {
-  display: none;
-}
-
-/* No underline under the focus name. */
-.jr .bp-focus::after {
-  display: none;
-}
-
-.jr .bp-link {
-  border-bottom: 0;
-  padding-bottom: 0;
-}
-
-/* Without WebGL: a lit, painted Earth and a sparse sky instead of the 3D scene. The Earth drifts into the corner
-   as the first project arrives, like the 3D one does. */
-.jr[data-gl="off"] .jr-3d {
-  --fe: clamp(0, (var(--jt) - 0.57) * 7, 1);
-  background:
-    radial-gradient(1px 1px at 20% 30%, #fff8 50%, transparent 52%),
-    radial-gradient(1px 1px at 70% 22%, #fff7 50%, transparent 52%),
-    radial-gradient(1px 1px at 85% 68%, #fff6 50%, transparent 52%),
-    radial-gradient(1px 1px at 12% 78%, #fff6 50%, transparent 52%),
-    radial-gradient(1px 1px at 46% 12%, #fff6 50%, transparent 52%);
-  opacity: clamp(0, (var(--c1) - 0.3) * 3, 1);
-}
-.jr[data-gl="off"] .jr-3d::before {
-  content: "";
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 60svh;
-  height: 60svh;
-  border-radius: 50%;
-  background:
-    radial-gradient(circle at 72% 32%, rgba(255, 255, 255, 0.18), transparent 28%),
-    radial-gradient(circle at 70% 34%, #5e93b8 0, #2a5f8f 24%, #123a63 48%, #07192e 74%, #040b16 100%);
-  box-shadow: 0 0 0 1px rgba(130, 175, 255, 0.12), 0 0 3.5rem 0.4rem rgba(90, 150, 255, 0.12);
-  transform: translate(calc(-50% - var(--fe) * 38vw), calc(-50% + var(--fe) * 26svh)) scale(calc(1 - var(--fe) * 0.78));
 }
