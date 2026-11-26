@@ -87,7 +87,7 @@ const structuredData = {
   ],
 };
 
-export const viewport: Viewport = { themeColor: "#050506" };
+export const viewport: Viewport = { themeColor: "#050506", viewportFit: "cover" };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (

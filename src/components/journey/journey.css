@@ -274,6 +274,11 @@
   clip-path: circle(calc(var(--io) * 72%) at 50% 50%);
 }
 
+/* If a phone's address bar slides away, the strip below the pinned stage stays dark. */
+.jr[data-iris="open"] {
+  background: #070708;
+}
+
 .jr[data-iris="open"] .jr-stage {
   clip-path: none;
 }
@@ -345,6 +350,16 @@
 
 .jr .bm-pulse {
   transition: opacity 0.5s ease calc(var(--t, 0) * 1.6s + 0.6s);
+}
+
+/* Phones: the land's faint fill follows the drawing itself. A timed fade here repainted every country for a second. */
+@media (pointer: coarse) {
+
+  .jr .bm-land {
+    transition: none;
+    fill-opacity: clamp(0, calc((var(--mp, 0) - 0.75) * 0.3), 0.075);
+  }
+
 }
 
 .jr[data-scrolling="true"] .bm-pulse,
@@ -573,7 +588,7 @@
   clip-path: none;
   position: relative;
   height: auto;
-  overflow: visible;
+  overflow: clip; /* the wide map must not stretch a phone page sideways */
   display: grid;
   gap: 3rem;
   padding: 8rem var(--header-pad-x) calc(var(--ov) + 4rem);
@@ -704,4 +719,103 @@
 /* The gradient lettering needs room for the tail of the "g". */
 .jr .bp-focus {
   padding-bottom: 0.16em;
+}
+
+/* Readable small type on taller phones. */
+@media (max-aspect-ratio: 19/20) and (min-height: 720px) {
+
+  .jr-chips li {
+    font-size: 0.68rem;
+  }
+
+  .jr .bp-idx {
+    font-size: 0.68rem;
+  }
+
+}
+
+/* Very short phones have no room for the portrait beside the text. */
+@media (max-aspect-ratio: 19/20) and (max-height: 620px) {
+
+  .jr:not([data-still="true"]) .jr-photo {
+    display: none;
+  }
+
+}
+
+@media (pointer: coarse) {
+
+  .jr .bp-link {
+    display: flex;
+    width: max-content;
+    align-items: center;
+    min-height: 44px;
+  }
+
+}
+
+/* A phone held sideways: one compact column under the header, the portrait small on the right. */
+@media (orientation: landscape) and (max-height: 500px) {
+
+  .jr:not([data-still="true"]) .jr-label {
+    display: none;
+  }
+
+  .jr:not([data-still="true"]) .jr-copy {
+    top: calc(var(--header-pad-y) + var(--pill-h) + 0.5rem);
+    bottom: 0.5rem;
+    width: 56%;
+  }
+
+  .jr:not([data-still="true"]) .jr-photo {
+    width: min(17vw, 42svh);
+  }
+
+  .jr .bp-label {
+    margin-bottom: 0.4rem;
+  }
+
+  .jr .bp-name {
+    margin-bottom: 0.4rem;
+    font-size: 1.8rem;
+  }
+
+  .jr .bp-journey {
+    margin-bottom: 0.4rem;
+    font-size: 1rem;
+  }
+
+  .jr .bp-text {
+    font-size: 0.78rem;
+    line-height: 1.4;
+  }
+
+  .jr .jr-terms {
+    margin-top: 0.2rem;
+  }
+
+  .jr .jr-terms li {
+    font-size: 0.9rem;
+    line-height: 1.15;
+  }
+
+  .jr .jr-chips {
+    gap: 0.3rem;
+    margin-top: 0.4rem;
+  }
+
+  .jr .jr-chips li {
+    padding: 0.15rem 0.5rem;
+    font-size: 0.6rem;
+  }
+
+  .jr .jr-gap {
+    margin-top: 0.35rem;
+  }
+
+  .jr .bp-focus {
+    margin-bottom: 0.4rem;
+    font-size: 2.8rem;
+  }
+
 }

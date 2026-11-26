@@ -117,7 +117,7 @@ export function Header() {
     </header>
     {/* Sibling, not child, of the header: its entrance animation would otherwise become the fixed menu's containing block. */}
     {open && (
-        <div id="menu" className="menu" role="dialog" aria-modal="true" aria-label="Site menu">
+        <div id="menu" className="menu" role="dialog" aria-modal="true" aria-label="Site menu" data-lenis-prevent>
           <nav aria-label="Primary">
             <ul>
               {navItems.map((n, i) => (

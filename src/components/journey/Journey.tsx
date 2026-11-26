@@ -80,7 +80,8 @@ export function Journey() {
 
     const layout = () => {
       // Overlap the end of the hero so the pinned stage is already in place when the map opens.
-      const vh = window.innerHeight;
+      // The stage's own height, not innerHeight: it does not change when a phone's address bar slides away.
+      const vh = stage.offsetHeight;
       const Hh = hero.offsetHeight;
       const range = Math.max(1, Hh - vh);
       const sPin = PIN * range;
@@ -95,7 +96,7 @@ export function Journey() {
 
     const update = () => {
       raf = 0;
-      const vh = window.innerHeight;
+      const vh = stage.offsetHeight;
       const range = Math.max(1, hero.offsetHeight - vh);
       const S = window.scrollY;
       const io = clamp((S / range - IRIS_A) / (IRIS_B - IRIS_A));
@@ -105,8 +106,9 @@ export function Journey() {
       set(map, "--mp", smooth(io)); // the map is drawn once, while the iris opens
       set(map, "--bp", t > 0.03 ? 1 : 0, 0); // routes and cities then light up once, on their own clock
       paint(map, "transform", `translate3d(${(-5 * t).toFixed(3)}vw, 0, 0) scale(${(1 + 0.07 * t).toFixed(4)})`); // slow push-in
-      set(label, "--jt", t);
-      set(photo, "--jt", t);
+      // Both have finished appearing by 0.08, so there is nothing left to restyle after that.
+      set(label, "--jt", Math.min(t, 0.08));
+      set(photo, "--jt", Math.min(t, 0.08));
       MOMENTS.forEach(([a, b], i) => set(moments[i], "--v", smooth(win(t, a, b))));
 
       const m = MOMENTS.findIndex(([a, b]) => t >= a && t < b);

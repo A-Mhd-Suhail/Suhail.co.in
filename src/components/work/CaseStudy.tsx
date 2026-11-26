@@ -21,7 +21,7 @@ export function CaseStudy({ project: p, next }: { project: Project; next?: Proje
     <main className="cs-page" data-tone="dark" data-bar="#070708">
       <div className="cs-wrap">
         <a className="cs-back" href="/#things-i-build">
-          <span aria-hidden="true">←</span> All projects
+          All projects
         </a>
 
         <header className="cs-header cs-rise">
@@ -40,12 +40,12 @@ export function CaseStudy({ project: p, next }: { project: Project; next?: Proje
           <div className="cs-actions cs-rise cs-rise-3">
             {p.links.demo && (
               <a className="cs-action" href={p.links.demo} target="_blank" rel="noopener noreferrer">
-                Live demo <span aria-hidden="true">↗</span>
+                Live demo
               </a>
             )}
             {p.links.repo && (
               <a className="cs-action" href={p.links.repo} target="_blank" rel="noopener noreferrer">
-                GitHub repository <span aria-hidden="true">↗</span>
+                GitHub repository
               </a>
             )}
           </div>
@@ -115,13 +115,13 @@ export function CaseStudy({ project: p, next }: { project: Project; next?: Proje
 
         <footer className="cs-footer">
           <a className="cs-back" href="/#things-i-build">
-            <span aria-hidden="true">←</span> Back to all projects
+            Back to all projects
           </a>
           {next && (
             <a className="cs-next" href={`/work/${next.slug}`}>
               <span className="cs-label">Next project</span>
               <span className="cs-next-name">
-                {next.name} <span aria-hidden="true">→</span>
+                {next.name}
               </span>
             </a>
           )}

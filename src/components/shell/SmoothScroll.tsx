@@ -17,7 +17,7 @@ function scrollToHash(id: string) {
   if (!el) return;
   window.__navLock = performance.now() + 2200;
   if (window.__lenis) window.__lenis.scrollTo(el, { duration: 1.4, easing: (t) => 1 - Math.pow(1 - t, 4) });
-  else el.scrollIntoView();
+  else el.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
   history.replaceState(null, "", `#${id}`);
   // Move keyboard focus with the view, as a native anchor jump would.
   if (!el.hasAttribute("tabindex")) {
@@ -28,7 +28,7 @@ function scrollToHash(id: string) {
 }
 
 /**
- * Inertial scrolling for wheel/trackpad (touch stays native; reduced-motion users get plain
+ * Inertial scrolling for wheel/trackpad (touch devices and reduced-motion users get plain native
  * scrolling), plus smooth in-page anchor links for every `#section` link on the page.
  */
 export function SmoothScroll() {
@@ -60,7 +60,8 @@ export function SmoothScroll() {
         })
         .catch(() => undefined);
     };
-    if (!reduced) {
+    // Mouse and trackpad only. Touch scrolling is already smooth natively, and Lenis's touch listeners could delay it.
+    if (!reduced && window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
       if (typeof window.requestIdleCallback === "function") idle = window.requestIdleCallback(startLenis, { timeout: 2000 });
       else idle = window.setTimeout(startLenis, 400);
     }

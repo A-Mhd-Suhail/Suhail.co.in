@@ -7,7 +7,7 @@ import { useReducedMotion } from "@/lib/useReducedMotion";
 /**
  * Short intro curtain. The page content is already in the HTML underneath it, so this never gates anything:
  * it lifts as soon as scripts have run and fonts are ready (not on window "load", which waits for every
- * image), after at least ~0.5s so the bar can be seen, and a CSS animation clears it if scripts never run.
+ * image), no earlier than ~0.5s after navigation, and a CSS animation clears it if scripts never run.
  * The bar and the counter are updated directly on the DOM, so there is no React re-render per frame.
  */
 export function Preloader() {
@@ -18,7 +18,7 @@ export function Preloader() {
 
   useEffect(() => {
     const root = document.documentElement;
-    const started = performance.now();
+    const started = 0; // counted from navigation start, so a slow connection never waits twice
     const minimum = reduced ? 120 : 520;
     let finished = false;
     let raf = 0;

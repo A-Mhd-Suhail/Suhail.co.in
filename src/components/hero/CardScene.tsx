@@ -31,7 +31,7 @@ const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 function heroProgress(): number {
   const el = document.getElementById("home");
   if (!el) return 0;
-  const total = Math.max(1, el.offsetHeight - window.innerHeight);
+  const total = Math.max(1, el.offsetHeight - (el.firstElementChild as HTMLElement).offsetHeight);
   return clamp(-el.getBoundingClientRect().top / total);
 }
 
@@ -333,10 +333,13 @@ export default function CardScene({
   onLost: () => void;
 }) {
   const tier = getTier();
+  // Phone screens are very dense: 1.5x is still sharp there and draws about a quarter fewer pixels than 1.75x.
+  const maxDpr = tier === "low" ? 1 : tier === "mid" ? 1.35 : window.matchMedia("(pointer: coarse)").matches ? 1.5 : 1.75;
   return (
     <Canvas
       frameloop={active ? "always" : "never"}
-      dpr={tier === "high" ? [1, 1.75] : tier === "mid" ? [1, 1.35] : [1, 1]}
+      dpr={[1, maxDpr]}
+      resize={{ scroll: false }}
       camera={{ position: [0, 0, 6], fov: 30, near: 0.1, far: 60 }}
       gl={{ antialias: tier !== "low", alpha: true, powerPreference: "high-performance" }}
       onCreated={({ gl }) => {

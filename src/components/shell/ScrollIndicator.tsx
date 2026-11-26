@@ -10,6 +10,7 @@ export function ScrollIndicator() {
     let raf = 0;
     const update = () => {
       raf = 0;
+      if (window.matchMedia("(max-width: 700px)").matches) return; // the track is hidden on phones
       const max = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
       const p = Math.min(1, Math.max(0, window.scrollY / max));
       if (thumb.current) thumb.current.style.setProperty("--p", p.toFixed(4));

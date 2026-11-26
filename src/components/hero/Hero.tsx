@@ -61,7 +61,7 @@ export function Hero() {
     let hidden = false;
     const update = () => {
       raf = 0;
-      const total = Math.max(1, el.offsetHeight - window.innerHeight);
+      const total = Math.max(1, el.offsetHeight - (el.firstElementChild as HTMLElement).offsetHeight);
       const p = Math.min(1, Math.max(0, -el.getBoundingClientRect().top / total));
       el.style.setProperty("--p", p.toFixed(4));
       // From here the next section covers the whole screen, so the 3D card stops rendering behind it.
