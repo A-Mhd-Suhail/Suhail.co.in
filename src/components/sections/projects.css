@@ -1,4 +1,4 @@
-/* Projects: a plain white page. Text left, screenshot right; stacked on narrow screens. */
+/* Projects: a plain white page. Screenshot and text swap sides row by row; stacked on narrow screens. */
 .pj {
   background: #fff;
   color: var(--ink);
@@ -127,10 +127,49 @@
   box-shadow: 0 30px 70px -30px rgba(25, 25, 25, 0.35);
 }
 
+/* Window title bar: the red, yellow and green dots. */
+.pj-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  height: clamp(1.8rem, 2.6vw, 2.5rem);
+  padding: 0 0.95rem;
+  border-bottom: 1px solid rgba(25, 25, 25, 0.08);
+  background: #ececee;
+}
+
+.pj-bar i {
+  width: clamp(9px, 0.8vw, 12px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: #ff5f57;
+}
+
+.pj-bar i:nth-child(2) {
+  background: #febc2e;
+}
+
+.pj-bar i:nth-child(3) {
+  background: #28c840;
+}
+
 .pj-shot img {
   display: block;
   width: 100%;
   height: auto;
+}
+
+/* Second, fourth, ...: screenshot on the left, text on the right. */
+@media (min-width: 861px) {
+
+  .pj-row:nth-of-type(even) {
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  }
+
+  .pj-row:nth-of-type(even) .pj-media {
+    order: -1;
+  }
+
 }
 
 @media (max-width: 860px) {

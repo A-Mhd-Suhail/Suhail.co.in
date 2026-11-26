@@ -27,11 +27,12 @@ export const profile = {
 
   /** Text engraved on the hero visiting card. Edit here; nothing else is hard-coded. */
   card: {
-    label: "Personal identity",
-    name: "SUHAIL.",
-    role: "Cyber Security Enthusiast",
+    brand: "NIGHTBERRIEZ",
+    established: "EST. 2026",
+    name: "MOHAMED SUHAIL",
+    role: "Product & Innovation Strategist",
     school: "VIT University",
-    building: "Building NightBerrieZ",
+    course: "Cyber Security",
   },
 
   /** Path to a PDF in /public (e.g. "/resume.pdf"). null hides the download link. */

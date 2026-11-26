@@ -72,9 +72,9 @@ export function Building() {
 
   return (
     <section ref={root} id="building" className="nbx" data-live="false" aria-labelledby="building-title">
-      <div className="nbx-sticky" data-tone="light">
+      <div className="nbx-sticky" data-tone="light" data-bar="#fff">
         <span className="nbx-orbit" aria-hidden />
-        <div className="nbx-iris" data-tone="dark">
+        <div className="nbx-iris" data-tone="dark" data-bar="#000">
           <div className="nbx-bg" aria-hidden />
           <div className="nbx-logo">
             <NightBerriezLogo />

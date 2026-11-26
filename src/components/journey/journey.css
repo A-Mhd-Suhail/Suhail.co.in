@@ -238,7 +238,7 @@
 
 /* ═════════════ The journey: one pinned stage, one map ═════════════
    Journey.tsx turns the scroll position into custom properties on .jr:
-   --io iris, --mp map drawing, --jt journey time, --bp about progress, --m0..3 about moments.
+   --mp map drawing, --bp routes lit, --jt journey time, --v each About moment; it clips and moves the stage and map directly.
    Nothing here is time based except small ambient loops that pause off screen. */
 .jr {
   --gold: #c9ae83;
@@ -269,14 +269,17 @@
   height: 100svh;
   overflow: hidden;
   background: #070708;
-  /* The map environment opens from the middle of the visiting-card scene. */
-  -webkit-mask-image: radial-gradient(circle farthest-corner at 50% 50%, #000 calc(var(--io) * 118% - 16%), transparent calc(var(--io) * 118%));
-  mask-image: radial-gradient(circle farthest-corner at 50% 50%, #000 calc(var(--io) * 118% - 16%), transparent calc(var(--io) * 118%));
+  /* The map environment opens from the middle of the visiting-card scene. A clip is much cheaper to redraw
+     than a soft mask. 72% reaches the corners. */
+  clip-path: circle(calc(var(--io) * 72%) at 50% 50%);
 }
 
 .jr[data-iris="open"] .jr-stage {
-  -webkit-mask-image: none;
-  mask-image: none;
+  clip-path: none;
+}
+
+.jr[data-bar] .jr-stage {
+  pointer-events: auto;
 }
 
 .jr-anchor {
@@ -300,6 +303,7 @@
   inset: 0;
   z-index: 2;
   perspective: 1500px;
+  will-change: transform;
   -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 9%, #000 91%, transparent 100%);
   mask-image: linear-gradient(90deg, transparent 0, #000 9%, #000 91%, transparent 100%);
 }
@@ -317,13 +321,35 @@
   max-width: none;
   height: auto;
   transform-origin: 50% 60%;
-  transform: translate(-50%, -50%) translateX(calc(-9vw - var(--bp, 0) * 5vw)) rotateX(24deg) scale(calc(1 + var(--bp, 0) * 0.07));
+  transform: translate(-50%, -50%) translateX(-9vw) rotateX(24deg);
   overflow: visible;
 }
 
 /* One drawing, driven by --mp while the iris opens. It never restarts. */
 .jr .bm-land {
   stroke-dashoffset: calc(1 - clamp(0, (var(--mp, 0) - var(--d, 0)) * 1.08, 1));
+}
+
+/* Routes and cities light up in turn, once, when About begins. */
+.jr .bm-land {
+  transition: fill-opacity 1.2s ease;
+}
+
+.jr .bm-arc {
+  transition: stroke-dashoffset 1.1s ease calc(var(--t, 0) * 1.6s);
+}
+
+.jr .bm-node {
+  transition: opacity 0.5s ease calc(var(--t, 0) * 1.6s);
+}
+
+.jr .bm-pulse {
+  transition: opacity 0.5s ease calc(var(--t, 0) * 1.6s + 0.6s);
+}
+
+.jr[data-scrolling="true"] .bm-pulse,
+.jr[data-scrolling="true"] .bm-home .bm-halo {
+  animation-play-state: paused;
 }
 
 .jr-scrim {
@@ -482,7 +508,7 @@
 
   .bm {
     top: 36%;
-    transform: translate(-50%, -50%) translateX(calc(-59vw - var(--bp, 0) * 5vw)) rotateX(18deg) scale(calc(1 + var(--bp, 0) * 0.06));
+    transform: translate(-50%, -50%) translateX(-59vw) rotateX(18deg);
   }
 
   .jr-scrim {
@@ -544,11 +570,10 @@
 }
 
 .jr[data-still="true"] .jr-stage {
+  clip-path: none;
   position: relative;
   height: auto;
   overflow: visible;
-  -webkit-mask-image: none;
-  mask-image: none;
   display: grid;
   gap: 3rem;
   padding: 8rem var(--header-pad-x) calc(var(--ov) + 4rem);
@@ -560,6 +585,7 @@
 }
 
 .jr[data-still="true"] .jr-map {
+  transform: none;
   position: absolute;
   inset: 0 0 auto 0;
   height: 70svh;
@@ -601,4 +627,81 @@
 .jr[data-still="true"] a,
 .jr[data-still="true"] li[tabindex] {
   pointer-events: auto;
+}
+
+/* Wide screens: the About column lives in the space under the label, so the two can never meet. */
+@media (min-aspect-ratio: 19/20) {
+
+  .jr:not([data-still="true"]) .jr-copy {
+    top: calc(clamp(5.6rem, 9vw, 7rem) + 2.4rem);
+    bottom: calc(var(--ov) + 0.75rem);
+    transform: none;
+    align-content: center;
+  }
+
+}
+
+/* Short laptop screens: tighter type so the longest moment still fits under the label. */
+@media (min-aspect-ratio: 19/20) and (max-height: 760px) {
+
+  .jr:not([data-still="true"]) .jr-copy {
+    top: calc(clamp(5.6rem, 9vw, 7rem) + 1.6rem);
+  }
+
+  .jr .bp-journey {
+    margin-bottom: 0.7rem;
+    font-size: 1.2rem;
+  }
+
+  .jr .bp-text {
+    font-size: 0.86rem;
+    line-height: 1.55;
+  }
+
+  .jr-terms li {
+    font-size: clamp(1.1rem, 4.2svh, 1.8rem);
+  }
+
+  .jr-gap {
+    margin-top: 0.55rem;
+  }
+
+}
+
+/* Short phones: smaller portrait and list, so the text starts below the picture. */
+@media (max-aspect-ratio: 19/20) and (max-height: 720px) {
+
+  .jr-photo {
+    top: 6.6rem;
+    width: 21vw;
+  }
+
+  .jr .bp-journey {
+    margin-bottom: 0.6rem;
+    font-size: 1.05rem;
+  }
+
+  .jr .bp-text {
+    font-size: 0.82rem;
+    line-height: 1.5;
+  }
+
+  .jr-terms li {
+    font-size: 1.02rem;
+  }
+
+  .jr-chips li {
+    padding: 0.22rem 0.55rem;
+    font-size: 0.55rem;
+  }
+
+  .jr-gap {
+    margin-top: 0.45rem;
+  }
+
+}
+
+/* The gradient lettering needs room for the tail of the "g". */
+.jr .bp-focus {
+  padding-bottom: 0.16em;
 }

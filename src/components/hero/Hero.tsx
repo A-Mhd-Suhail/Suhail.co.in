@@ -16,6 +16,7 @@ export function Hero() {
   const host = useRef<HTMLElement>(null);
   const s = useScene(host);
   const [Scene, setScene] = useState<SceneComponent | null>(null);
+  const [covered, setCovered] = useState(false);
   const { gl, onLost } = s;
 
   // The static card is in the HTML from the first byte. The 3D bundle is fetched after hydration, when the
@@ -57,11 +58,17 @@ export function Hero() {
     const el = host.current;
     if (!el) return;
     let raf = 0;
+    let hidden = false;
     const update = () => {
       raf = 0;
       const total = Math.max(1, el.offsetHeight - window.innerHeight);
       const p = Math.min(1, Math.max(0, -el.getBoundingClientRect().top / total));
       el.style.setProperty("--p", p.toFixed(4));
+      // From here the next section covers the whole screen, so the 3D card stops rendering behind it.
+      if (p >= 0.945 !== hidden) {
+        hidden = !hidden;
+        setCovered(hidden);
+      }
     };
     const onScroll = () => {
       if (!raf) raf = requestAnimationFrame(update);
@@ -88,7 +95,7 @@ export function Hero() {
           <CardFallback />
           {s.gl === "ok" && Scene && (
             <ErrorBoundary onError={s.onLost}>
-              <Scene pointer={s.pointer} reduced={s.reduced} active={s.active} onReady={s.onReady} onLost={s.onLost} />
+              <Scene pointer={s.pointer} reduced={s.reduced} active={s.active && (s.reduced || !covered)} onReady={s.onReady} onLost={s.onLost} />
             </ErrorBoundary>
           )}
         </div>

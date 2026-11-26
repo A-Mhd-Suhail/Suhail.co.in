@@ -54,7 +54,7 @@ export function SmoothScroll() {
       import("lenis")
         .then(({ default: LenisCtor }) => {
           if (cancelled) return;
-          lenis = new LenisCtor({ autoRaf: true, lerp: 0.085, wheelMultiplier: 0.95 });
+          lenis = new LenisCtor({ autoRaf: true, lerp: 0.11, wheelMultiplier: 1 });
           if (isReload) lenis.scrollTo(0, { immediate: true });
           window.__lenis = lenis;
         })

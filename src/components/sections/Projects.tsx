@@ -6,7 +6,7 @@ import "./projects.css";
 
 const statusLabel = { completed: "Completed", "in-progress": "In progress", prototype: "Prototype" } as const;
 
-/** The projects on a plain white page: words on the left, the screenshot on the right, each rising in on scroll. */
+/** The projects on a plain white page: screenshot in a window frame, alternating right, left, right; rises in on scroll. */
 export function Projects() {
   const all = publicProjects();
   const items = network.stops
@@ -14,7 +14,7 @@ export function Projects() {
     .filter((s): s is typeof s & { project: Project } => !!s.project);
 
   return (
-    <section id="things-i-build" className="pj overlap" data-tone="light" data-own-reveal="" aria-labelledby="pj-title">
+    <section id="things-i-build" className="pj overlap" data-tone="light" data-bar="#fff" data-own-reveal="" aria-labelledby="pj-title">
       <div className="pj-wrap">
         <Fade className="pj-head">
           <h2 id="pj-title" className="pj-title">
@@ -52,6 +52,11 @@ export function Projects() {
               {shot && (
                 <Fade className="pj-media" delay={0.12}>
                   <a className="pj-shot" href={`/work/${slug}`} tabIndex={-1} aria-hidden>
+                    <span className="pj-bar">
+                      <i />
+                      <i />
+                      <i />
+                    </span>
                     <Image src={shot.src} alt="" width={shot.width} height={shot.height} sizes="(max-width: 860px) 92vw, 56vw" quality={75} />
                   </a>
                 </Fade>

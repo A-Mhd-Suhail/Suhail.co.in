@@ -6,7 +6,7 @@ import { Year } from "./Year";
 export function Footer() {
   const { email, phoneDisplay, phoneE164, country } = profile.contact;
   return (
-    <footer className="footer overlap" data-tone="dark">
+    <footer className="footer overlap" data-tone="dark" data-bar="var(--ink)">
       <div className="wrap">
         <div className="footer-top" data-reveal>
           <div>

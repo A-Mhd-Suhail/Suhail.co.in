@@ -18,7 +18,7 @@ export function CaseStudy({ project: p, next }: { project: Project; next?: Proje
   const meta = [p.category, p.context].filter(Boolean).join(" · ");
 
   return (
-    <main className="cs-page" data-tone="dark">
+    <main className="cs-page" data-tone="dark" data-bar="#070708">
       <div className="cs-wrap">
         <a className="cs-back" href="/#things-i-build">
           <span aria-hidden="true">←</span> All projects

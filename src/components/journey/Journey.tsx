@@ -15,20 +15,20 @@ const WorldMap = dynamic(() => import("../beyond/WorldMap"), { ssr: false });
  * backwards restores each state exactly and nothing is drawn twice. The projects follow on a plain white page.
  */
 
-const TRAVEL = 5; // scroll length after the iris, in viewport heights
+const TRAVEL = 4; // scroll length after the iris, in viewport heights
 const PIN = 0.7; // the stage is pinned (but still masked) from this point of the hero's scroll
 const IRIS_A = 0.74; // hero progress at which the map environment starts to open
 const IRIS_B = 0.94; // ...and is fully open
 
 const clamp = (v: number, a = 0, b = 1) => Math.min(b, Math.max(a, v));
 const smooth = (t: number) => t * t * (3 - 2 * t);
-const win = (t: number, a: number, b: number, f = 0.04) => clamp((t - a) / f) * clamp((b - t) / f);
+const win = (t: number, a: number, b: number, f = 0.05) => clamp((t - a) / f) * clamp((b - t) / f);
 
 /** About moments: [in, out] on the timeline. The last one stays until the white page covers it. */
 const MOMENTS: [number, number][] = [
-  [0.02, 0.26],
-  [0.27, 0.51],
-  [0.52, 0.76],
+  [0.02, 0.27],
+  [0.27, 0.52],
+  [0.52, 0.77],
   [0.77, 9],
 ];
 
@@ -45,16 +45,35 @@ export function Journey() {
   useEffect(() => {
     const el = root.current;
     const hero = document.getElementById("home");
-    if (!el || !hero || still) return;
+    if (!el || !hero) return;
+    if (still) {
+      el.dataset.bar = "#070708"; // an ordinary stacked page: always keep the strip behind the header
+      return;
+    }
 
+    const part = (selector: string) => el.querySelector<HTMLElement>(selector)!;
+    const stage = part(".jr-stage");
+    const map = part(".jr-map");
+    const label = part(".jr-label");
+    const photo = part(".jr-photo");
+    const moments = MOMENTS.map((_, i) => part(`.jr-m${i}`));
+
+    // Each value is written on the one element that uses it, and only when it changes: writing them on the
+    // section would restyle every path of the map on every frame.
     let raf = 0;
-    const last: Record<string, string> = {};
-    const set = (k: string, v: number, digits = 4) => {
-      const s = v.toFixed(digits);
-      if (last[k] !== s) {
-        last[k] = s;
-        el.style.setProperty(k, s);
-      }
+    let rest = 0;
+    const last = new Map<HTMLElement, Record<string, string>>();
+    const set = (node: HTMLElement, key: string, value: number, digits = 3) => {
+      const next = value.toFixed(digits);
+      const seen = last.get(node) ?? {};
+      if (seen[key] === next) return;
+      seen[key] = next;
+      last.set(node, seen);
+      node.style.setProperty(key, next);
+    };
+    // Clip and push-in go straight onto their elements as plain styles: no map path has to be restyled for them.
+    const paint = (node: HTMLElement, key: "clipPath" | "transform", value: string) => {
+      if (node.style[key] !== value) node.style[key] = value;
     };
     let aboutOn = false;
     let mom = -1;
@@ -82,11 +101,13 @@ export function Journey() {
       const io = clamp((S / range - IRIS_A) / (IRIS_B - IRIS_A));
       const t = clamp((S - IRIS_B * range) / (TRAVEL * vh));
 
-      set("--io", io);
-      set("--mp", smooth(io)); // the map is drawn once, while the iris opens
-      set("--jt", t);
-      set("--bp", t);
-      MOMENTS.forEach(([a, b], i) => set(`--m${i}`, win(t, a, b)));
+      paint(stage, "clipPath", io >= 0.999 ? "none" : `circle(${(io * 72).toFixed(2)}% at 50% 50%)`);
+      set(map, "--mp", smooth(io)); // the map is drawn once, while the iris opens
+      set(map, "--bp", t > 0.03 ? 1 : 0, 0); // routes and cities then light up once, on their own clock
+      paint(map, "transform", `translate3d(${(-5 * t).toFixed(3)}vw, 0, 0) scale(${(1 + 0.07 * t).toFixed(4)})`); // slow push-in
+      set(label, "--jt", t);
+      set(photo, "--jt", t);
+      MOMENTS.forEach(([a, b], i) => set(moments[i], "--v", smooth(win(t, a, b))));
 
       const m = MOMENTS.findIndex(([a, b]) => t >= a && t < b);
       if (m !== mom) {
@@ -95,6 +116,9 @@ export function Journey() {
       }
       el.dataset.live = String(io > 0 && t < 1.001);
       el.dataset.iris = io >= 0.999 ? "open" : "opening";
+      // Once the scene starts to leave, it needs the strip behind the header like any other page.
+      if (t >= 0.999) el.dataset.bar = "#070708";
+      else delete el.dataset.bar;
 
       // The portrait is only requested once the intro starts to open.
       if (!aboutOn && io > 0.02) {
@@ -104,6 +128,10 @@ export function Journey() {
     };
     const onScroll = () => {
       if (!raf) raf = requestAnimationFrame(update);
+      // The looping map pulses pause while the page is moving, leaving the whole frame to the scroll.
+      if (el.dataset.scrolling !== "true") el.dataset.scrolling = "true";
+      window.clearTimeout(rest);
+      rest = window.setTimeout(() => (el.dataset.scrolling = "false"), 220);
     };
     const onResize = () => {
       layout();
@@ -121,7 +149,11 @@ export function Journey() {
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onResize);
       ro.disconnect();
+      window.clearTimeout(rest);
       if (raf) cancelAnimationFrame(raf);
+      // Take back every inline style, so a switch to the still layout is not overridden by the last frame.
+      [el, stage, map, label, photo, ...moments].forEach((node) => node.removeAttribute("style"));
+      delete el.dataset.bar;
     };
   }, [still]);
 

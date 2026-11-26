@@ -9,6 +9,8 @@ import { Roll } from "@/components/ui/Roll";
 /**
  * Fixed header: wordmark, LET'S TALK and MENU.
  * Colours follow whatever section is under the header (data-tone on sections drives html[data-tone]).
+ * A section with data-bar="<colour>" also gets a strip of that colour behind the header, so the name and the
+ * buttons never sit on top of the text scrolling underneath.
  */
 export function Header() {
   const active = useActiveSection();
@@ -16,20 +18,24 @@ export function Header() {
   const toggle = useRef<HTMLButtonElement>(null);
   const firstLink = useRef<HTMLAnchorElement>(null);
 
-  // Tone: sample the section under the header and expose it as html[data-tone="dark|light"].
+  // Tone and strip: sample the section under the header. Sampling reads layout, so it runs at most every 80ms.
   useEffect(() => {
-    let raf = 0;
+    let timer = 0;
     const root = document.documentElement;
     const update = () => {
-      raf = 0;
+      timer = 0;
       const hit = document
         .elementsFromPoint(window.innerWidth / 2, 56)
         .find((el) => !el.closest(".header") && el.closest("[data-tone]"));
-      const tone = hit?.closest<HTMLElement>("[data-tone]")?.dataset.tone ?? "dark";
+      const section = hit?.closest<HTMLElement>("[data-tone]");
+      const tone = section?.dataset.tone ?? "dark";
+      const bar = section?.dataset.bar;
       if (root.dataset.tone !== tone) root.dataset.tone = tone;
+      if (bar) root.style.setProperty("--bar", bar);
+      root.dataset.bar = bar ? "on" : "off";
     };
     const onScroll = () => {
-      if (!raf) raf = requestAnimationFrame(update);
+      if (!timer) timer = window.setTimeout(update, 80);
     };
     update();
     window.addEventListener("scroll", onScroll, { passive: true });
@@ -37,7 +43,7 @@ export function Header() {
     return () => {
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onScroll);
-      if (raf) cancelAnimationFrame(raf);
+      window.clearTimeout(timer);
     };
   }, []);
 

@@ -5,17 +5,17 @@
 export const network = {
   title: "Things I build",
   subtitle: "From ambitious ideas to working products. A collection of projects, experiments and technology-driven solutions.",
-  /** Order matters: it is the order the signals travel. */
+  /** Order matters: it is the order the projects appear on the home page. */
   stops: [
-    {
-      slug: "moonnav",
-      node: "moon",
-      blurb: "An interactive lunar mission-support experience exploring illumination, landing-site conditions and communication opportunities at the Moon's South Pole.",
-    },
     {
       slug: "naji-learning",
       node: "in",
       blurb: "An education platform exploring structured learning resources, competitive exam preparation and connected student learning experiences.",
+    },
+    {
+      slug: "moonnav",
+      node: "moon",
+      blurb: "An interactive lunar mission-support experience exploring illumination, landing-site conditions and communication opportunities at the Moon's South Pole.",
     },
     {
       slug: "united-medication",

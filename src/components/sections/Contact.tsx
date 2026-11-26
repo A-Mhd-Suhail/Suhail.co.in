@@ -19,7 +19,7 @@ export function Contact() {
   ].filter(Boolean) as { key: string; label: string; href: string; icon: React.ReactNode; external: boolean }[];
 
   return (
-    <section id="contact" className="section overlap overlap-light" data-tone="light" aria-labelledby="contact-title">
+    <section id="contact" className="section overlap overlap-light" data-tone="light" data-bar="var(--ivory)" aria-labelledby="contact-title">
       <div className="wrap contact">
         <p className="label" style={{ marginBottom: "1rem" }}>Contact</p>
         <div id="contact-title" className="contact-title">

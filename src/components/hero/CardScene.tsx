@@ -122,29 +122,34 @@ function drawLettering(canvas: HTMLCanvasElement) {
     });
   };
 
-  spaced(c.label.toUpperCase(), padX, ch * 0.13, ch * 0.034, ch * 0.007, dim);
+  // Top row: the brand on the left, the year on the right, sharing one baseline.
+  spaced(c.brand, padX, ch * 0.155, ch * 0.05, ch * 0.009, silver);
+  spaced(c.established, cw - padX, ch * 0.155, ch * 0.034, ch * 0.007, dim, "right");
 
-  g.font = `400 ${ch * 0.23}px ${serif}`;
+  // The name is the main element: as large as the design allows, never wider than the margins.
+  let nameSize = ch * 0.165;
+  g.font = `400 ${nameSize}px ${serif}`;
+  nameSize *= Math.min(1, (cw - padX * 2) / g.measureText(c.name).width);
+  g.font = `400 ${nameSize}px ${serif}`;
   g.fillStyle = silver;
   g.textAlign = "left";
-  g.fillText(c.name, padX, ch * 0.4);
+  g.fillText(c.name, padX, ch * 0.42);
 
   g.font = `400 ${ch * 0.05}px ${sans}`;
   g.fillStyle = dim;
-  g.fillText(c.role, padX, ch * 0.49);
+  g.fillText(c.role, padX, ch * 0.505);
 
   g.fillStyle = "rgba(217,220,226,0.55)";
-  g.fillRect(padX, ch * 0.575, cw - padX * 2, Math.max(1.5, ch * 0.003));
+  g.fillRect(padX, ch * 0.62, cw - padX * 2, Math.max(1.5, ch * 0.003));
 
   g.font = `500 ${ch * 0.058}px ${sans}`;
   g.fillStyle = silver;
-  g.fillText(c.school, padX, ch * 0.69);
-  g.font = `400 ${ch * 0.05}px ${sans}`;
+  g.fillText(c.school, padX, ch * 0.775);
+  g.font = `400 ${ch * 0.046}px ${sans}`;
   g.fillStyle = dim;
-  g.fillText(c.building, padX, ch * 0.77);
+  g.fillText(c.course, padX, ch * 0.865);
 
-  spaced(profile.name.toUpperCase(), padX, ch * 0.92, ch * 0.034, ch * 0.007, dim);
-  spaced(profile.contact.country.toUpperCase(), cw - padX, ch * 0.92, ch * 0.034, ch * 0.007, dim, "right");
+  spaced(profile.contact.country.toUpperCase(), cw - padX, ch * 0.865, ch * 0.034, ch * 0.007, dim, "right");
 }
 
 function Card({ pointer, reduced }: { pointer: RefObject<Pointer>; reduced: boolean }) {

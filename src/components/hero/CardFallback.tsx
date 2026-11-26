@@ -7,15 +7,15 @@ export function CardFallback() {
     <div className="card-fallback" aria-hidden>
       <div className="card-fallback-face">
         <div className="cf-row">
-          <span>{c.label}</span>
+          <span className="cf-brand">{c.brand}</span>
+          <span>{c.established}</span>
         </div>
         <p className="cf-name">{c.name}</p>
         <p className="cf-role">{c.role}</p>
         <hr />
         <p className="cf-school">{c.school}</p>
-        <p className="cf-role">{c.building}</p>
         <div className="cf-row cf-foot">
-          <span>{profile.name}</span>
+          <span className="cf-course">{c.course}</span>
           <span>{profile.contact.country}</span>
         </div>
       </div>
