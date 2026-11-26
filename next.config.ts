@@ -20,7 +20,6 @@ const nextConfig: NextConfig = {
     return [
       { source: "/projects/:path*", headers: cache },
       { source: "/icons/:path*", headers: cache },
-      { source: "/startup/:path*", headers: cache },
       { source: "/images/:path*", headers: cache },
       { source: "/apple-touch-icon.png", headers: cache },
     ];
@@ -31,6 +30,8 @@ const nextConfig: NextConfig = {
       { source: "/about", destination: "/#beyond", permanent: true },
       { source: "/work", destination: "/#things-i-build", permanent: true },
       { source: "/achievements", destination: "/", permanent: false },
+      // The first version of the site used this logo file. Anything still asking for it now gets the S.
+      { source: "/icon.svg", destination: "/icons/icon-192.png", permanent: true },
       { source: "/work/open-learning", destination: "/work/naji-learning", permanent: true },
       { source: "/nightberriez", destination: "/#building", permanent: true },
     ];
